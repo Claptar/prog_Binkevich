@@ -1,12 +1,14 @@
 from tkinter import *
 import graphics as gr
 import random
+import math
 import time
 
 root = Tk()
 root.geometry('800x600')
-n = 0
-R = 10
+score = 0
+R = 20
+miss=0
 
 
 def baloon():
@@ -22,9 +24,12 @@ def baloon():
 def left_click(event):
     x = event.x
     y = event.y
-    global n
-    if abs(circle_x - x) < R+1 and abs(circle_y-y) < R+1:
-        n += 1
+    global score, miss
+    if math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y))<R+1:
+        score += 1
+    else:
+        miss +=1
+
 
 
 
@@ -33,7 +38,10 @@ def tick():
     root.after(1000, tick)
     canv.delete(ALL)
     baloon()
-    canv.create_text(400, 300, text=n, font='Arial 25')
+    canv.create_text(80, 20, text="score", font='Arial 25')
+    canv.create_text(140, 20, text=score, font='Arial 25')
+    canv.create_text(80, 60, text="missclicks", font='Arial 25')
+    canv.create_text(180, 60, text=miss, font='Arial 25')
 
 
 root.bind('<Button-1>', left_click)
