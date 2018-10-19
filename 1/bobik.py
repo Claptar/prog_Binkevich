@@ -5,9 +5,9 @@ import time
 
 
 def bobik():
-    r1 = random.randint(20, 580)
-    r2 = random.randint(20, 580)
-    canv.create_oval(r1-10, r2-10, r1+10, r2+10,fill=gr.color_rgb(random.randint(100, 255), random.randint(100, 255), random.randint(100 , 255)))
+    x = random.randint(20, 580)
+    y = random.randint(20, 580)
+    canv.create_oval(x-10, y-10,x+10, y+10,fill=gr.color_rgb(random.randint(100, 255), random.randint(100, 255), random.randint(100 , 255)))
 
 
 def tick():
@@ -15,7 +15,10 @@ def tick():
     canv.delete(ALL)
     bobik()
 
+root.bind('<Button-1>',left_button)
 
+def left_button(event):
+    root.title("Left")
 root = Tk()
 root.geometry('800x600')
 
