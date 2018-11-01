@@ -1,28 +1,29 @@
 from tkinter import *
+import random
 
 root = Tk()
-root.geometry("300x300")
+root.geometry("800x800")
 canvas = Canvas(root)
-x, y = 100, 100
 r = 40
-oval = canvas.create_oval(x, y, x+r, y+r)
 canvas.pack(fill=BOTH, expand=1)
-balls: list
-ball: list
+balls = []
+ball = []
 
 for i in range(5):
-    m = canvas.create_oval(x, y, x+r, y+r)
-    Vx = i
-    Vy = 2*i
-    ball.append(m)
+    x = random.randint(100, 600)
+    y = random.randint(100, 600)
+    Vx = random.randint(1, 5)*i
+    Vy = random.randint(1, 5)*i
+    ball.append(canvas.create_oval(x, y, x+r, y+r))
     ball.append(Vx)
     ball.append(Vy)
     balls.append(ball)
 
 
 def tick_handler():
-    for i in range (5)
-        canvas.move(balls[i][j], , dy)
+    global balls, ball, x, y
+    for j in range(5):
+        canvas.move(balls[j-1][0], balls[j-1][1], balls[j-1][2])
 
 
 def time_handler():
