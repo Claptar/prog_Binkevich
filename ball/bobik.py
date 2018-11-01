@@ -37,7 +37,7 @@ def left_click(event):
 def tick():
     global clicks
     clicks = 0
-    root.after(3000, tick)
+    root.after(1000, tick)
     canv.delete(ALL)
     baloon()
     canv.create_text(80, 20, text="score", font='Arial 25')
