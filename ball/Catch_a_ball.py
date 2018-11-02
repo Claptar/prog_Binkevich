@@ -2,7 +2,7 @@ from tkinter import *
 import graphics as gr
 import random
 import math
-import time
+
 
 root = Tk()
 root.geometry('800x600')
