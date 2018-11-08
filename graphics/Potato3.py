@@ -49,7 +49,7 @@ X6 = [2, 2, 4, 5, 6, 8, 8]
 Y6 = [5, 6, 2, 2, 2, 2, 3]
 X7 = [5, 6, 6, 9, 9, 9]
 Y7 = [6, 5, 6, 3, 4, 5]
-for i in range (100):
+for i in range (1000):
     potatoes(random.randint(0,1000),random.randint(0,1000))
 message = gr.Text(gr.Point(window.getWidth() / 2, 120), 'Potato')
 message.setTextColor('yellow')
