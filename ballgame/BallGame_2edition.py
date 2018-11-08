@@ -10,7 +10,6 @@ canvas.pack(fill=BOTH, expand=1)
 Balls = []
 
 
-
 class Ball:
     def __init__(self, x, y, Vx, Vy, red , green, blue, r):
         self.x = x
@@ -30,7 +29,7 @@ class Ball:
         self.y += self.Vy
 
 for i in range(10):
-    r = random.randint(20,40)
+    r = random.randint(20, 40)
     x = random.randint(100, 300)
     y = random.randint(100, 300)
     Vx = random.randint(-2, 2)
@@ -43,7 +42,7 @@ for i in range(10):
 
 
 def tick():
-    for i in range(10):
+    for g in range(10):
         Balls[i-1].go()
     root.after(10, tick)
 
@@ -52,4 +51,3 @@ tick()
 canvas.pack(fill=BOTH, expand=1)
 
 root.mainloop()
-
