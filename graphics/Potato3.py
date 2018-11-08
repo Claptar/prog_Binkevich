@@ -1,4 +1,5 @@
 import graphics as gr
+import random
 
 window = gr.GraphWin("Ales' the Binkevich project", 1000, 1000)
 
@@ -48,9 +49,8 @@ X6 = [2, 2, 4, 5, 6, 8, 8]
 Y6 = [5, 6, 2, 2, 2, 2, 3]
 X7 = [5, 6, 6, 9, 9, 9]
 Y7 = [6, 5, 6, 3, 4, 5]
-potatoes(60, 140)
-potatoes(250, 400)
-potatoes(600, 200)
+for i in range (100):
+    potatoes(random.randint(0,1000),random.randint(0,1000))
 message = gr.Text(gr.Point(window.getWidth() / 2, 120), 'Potato')
 message.setTextColor('yellow')
 message.setStyle('italic')
