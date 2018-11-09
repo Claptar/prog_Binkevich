@@ -32,8 +32,8 @@ for i in range(10):
     r = random.randint(20, 40)
     x = random.randint(100, 300)
     y = random.randint(100, 300)
-    Vx = random.randint(-2, 2)
-    Vy = random.randint(-2, 2)
+    Vx = random.randint(-10, 10)
+    Vy = random.randint(-10, 10)
     red = random.randint(100, 255)
     green = random.randint(100, 255)
     blue = random.randint(100, 255)
@@ -43,8 +43,8 @@ for i in range(10):
 
 def tick():
     for g in range(10):
-        Balls[i-1].go()
-    root.after(10, tick)
+        Balls[g-1].go()
+    root.after(30, tick)
 
 tick()
 
