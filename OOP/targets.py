@@ -3,6 +3,8 @@ import random
 import graphics as gr
 import math
 
+n = 10
+
 
 class Vector:
     def __init__(self, x, y):
@@ -10,7 +12,7 @@ class Vector:
         self.y = y
 
 root = Tk()
-root.geometry("600x600")
+root.geometry("800x1000")
 canvas = Canvas(root)
 canvas.pack(fill=BOTH, expand=1)
 
@@ -27,15 +29,15 @@ class Ball:
         self.r = r
 
     def go(self):
-        if (self.x + self.r > 600) or (self.x - self.r < 0):
+        if (self.x + self.r > 800) or (self.x - self.r < 0):
             self.Vx *= -1
-        elif (self.y + self.r > 600) or (self.y - self.r < 0):
+        elif (self.y + self.r > 800) or (self.y - self.r < 0):
             self.Vy *= -1
         canvas.move(self.design, self.Vx, self.Vy)
         self.x += self.Vx
         self.y += self.Vy
 
-for i in range(4):
+for i in range(n):
     r = 50
     x = random.randint(100, 600)
     y = random.randint(100, 600)
@@ -61,8 +63,8 @@ for i in range(4):
 
 
 def tick():
-    for k in range(4):
-        for m in range(3):
+    for k in range(n-1):
+        for m in range(k,n-1):
             if k != (m+1):
                 if (Balls[k].x - Balls[m+1].x) ** 2 + (Balls[k].y - Balls[m+1].y) ** 2 <= Balls[k].r ** 2:
                     v1 = Vector(Balls[k].Vx, Balls[k].Vy)
@@ -84,7 +86,7 @@ def tick():
                     Balls[k].Vy = v1.y
                     Balls[m+1].Vx = v2.x
                     Balls[m+1].Vy = v2.y
-    for g in range(4):
+    for g in range(n):
         Balls[g-1].go()
     root.after(30, tick)
 
