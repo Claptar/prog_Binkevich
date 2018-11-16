@@ -61,15 +61,15 @@ for i in range(4):
 
 
 def tick():
-    for k in range(3):
+    for k in range(4):
         for m in range(3):
             if k != (m+1):
                 if (Balls[k].x - Balls[m+1].x) ** 2 + (Balls[k].y - Balls[m+1].y) ** 2 <= Balls[k].r ** 2:
                     v1 = Vector(Balls[k].Vx, Balls[k].Vy)
                     v2 = Vector(Balls[m+1].Vx, Balls[m+1].Vy)
                     line = Vector(Balls[k].x - Balls[m+1].x, Balls[k].y - Balls[m+1].y)
-                    line.x = line.x/math.sqrt(line.x**2 + line.y**2)
-                    line.y = line.y/math.sqrt(line.x**2 + line.y**2)
+                    line.x = line.x/math.sqrt((Balls[k].x - Balls[m+1].x)**2 + (Balls[k].y - Balls[m+1].y)**2)
+                    line.y = line.y/math.sqrt((Balls[k].x - Balls[m+1].x)**2 + (Balls[k].y - Balls[m+1].y)**2)
                     normal = Vector(-line.y, line.x)
                     v_line_1 = v1.x * line.x + v1.y * line.y
                     v_line_2 = v2.x * line.x + v2.y * line.y
