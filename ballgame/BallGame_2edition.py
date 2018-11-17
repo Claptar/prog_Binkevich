@@ -30,16 +30,22 @@ class Ball:
 
 for i in range(10):
     r = random.randint(20, 40)
-    x = random.randint(100, 300)
+    x =
     y = random.randint(100, 300)
     Vx = random.randint(-10, 10)
     Vy = random.randint(-10, 10)
     red = random.randint(100, 255)
     green = random.randint(100, 255)
     blue = random.randint(100, 255)
-    ball_i = Ball(x, y, Vx, Vy, red, green, blue, r)
-    Balls.append(ball_i)
+    Balls.append(
+        Ball(x=random.randint(100, 300),
+                  y=random.randint(100, 300), Vx, Vy, red, green, blue, r)
+    )
 
+
+
+def foo():
+    print(x)
 
 def tick():
     for g in range(10):

@@ -3,7 +3,7 @@ import random
 import graphics as gr
 import math
 
-n = 10
+n = 100
 
 
 class Vector:
@@ -41,25 +41,13 @@ for i in range(n):
     r = 50
     x = random.randint(100, 600)
     y = random.randint(100, 600)
-    Vx = random.randint(-5, 5)
-    Vy = random.randint(-5, 5)
+    Vx = random.randint(-7, 7)
+    Vy = random.randint(-7, 7)
     red = random.randint(100, 255)
     green = random.randint(100, 255)
     blue = random.randint(100, 255)
     ball_i = Ball(x, y, Vx, Vy, red, green, blue, r)
     Balls.append(ball_i)
-
-
-"""def babah (vx1, vy1, vx2, vy2, lx, ly):
-    nx = -ly
-    ny = nx
-    vl1 = (vx1 * lx + vy1 * ly) / math.sqrt(lx * lx + ly * ly)
-    vl2 = (vx2 * lx + vy2 * ly) / math.sqrt(lx * lx + ly * ly)
-    vn1 = (vx1 * nx + vy1 * ny) / math.sqrt(nx * nx + ny * ny)
-    vn1 = (vx1 * nx + vy1 * ny) / math.sqrt(nx * nx + ny * ny)
-    vl1, vl2 = vl2, vl1
-    vx1 = vl1*(lx/math.sqrt(lx*lx + ly*ly)) + vn1*(ny/math.sqrt(nx*nx + ny*ny))
-    vx2 = vl1 * (ly / math.sqrt(lx * lx + ly * ly)) + vn1 * (nx / math.sqrt(nx * nx + ny * ny))"""
 
 
 def tick():

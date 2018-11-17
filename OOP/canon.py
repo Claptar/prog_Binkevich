@@ -1,18 +1,29 @@
 import math
 import random
 from tkinter import *
-import time
 import graphics as gr
-
+root = Tk()
+fr = Frame(root)
+root.geometry('1000x800')
+canv = Canvas(root, bg='white')
+n = 10
 time_counter = 0
 g = 9.8  # Ускорение свободного падения для снаряда.
+Balls = []
+for i in range(n):
+    Balls.append(0)
+score = 0
+score_text = canv.create_text(200, 60, text='Попадания score = {} '.format(score), font='Arial 25', )
 
-Balls = [0, 0, 0, 0, 0]
 
 class Vector:
+    """
+    Вспомогательный класс, для векторных оперций
+    """
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
 
 class Cannon:
     max_velocity = 100
@@ -49,7 +60,6 @@ class Cannon:
 
         self.draw(self.x+40, self.y+40)
 
-
     def fire(self):
         """
         Создаёт объект снаряда (если ещё не потрачены все снаряды)
@@ -58,13 +68,17 @@ class Cannon:
         :param dt:  длительность клика мышки, мс
         :return: экземпляр снаряда типа Shell
         """
-        self.time_length = self.stop_time - self.start_time
-        self.power_speed = (self.power * self.time_length)/3
-        shell = Shell(self.x + 40 + self.line_length*math.cos(self.direction),
-                      self.y + 40 + self.line_length*math.sin(self.direction),
-                      self.power_speed, self.power_speed, self.canvas, self.direction)
+        if len(shells) < 10:
+            self.time_length = self.stop_time - self.start_time
+            self.power_speed = (self.power * self.time_length)/3
+            shell = Shell(self.x + 40 + self.line_length*math.cos(self.direction),
+                          self.y + 40 + self.line_length*math.sin(self.direction),
+                          self.power_speed, self.power_speed, self.canvas, self.direction)
 
-        shells.append(shell)
+            shells.append(shell)
+        else:
+            canv.create_text(200, 20, text="Закончились снаряды", font='Arial 25', )
+            print("Закончились снаряды")
 
     def draw(self, x_gun, y_gun):
         """
@@ -126,7 +140,7 @@ class Shell:
 
         if self.y > 600:
             self.canvas.delete(self.oval)
-        if self.x > 800:
+        if self.x > 1000:
             self.Vx = -self.Vx
 
     def draw(self):
@@ -175,7 +189,12 @@ class Target:
         self.y += self.Vy
 
 
-        # TODO: Шарики-мишени должны отражаться от стенок
+def hit_checker(shell, target):
+    if shell == 0 or target == 0:
+        return False
+    if (shell.x - target.x) ** 2 + (shell.y - target.y) ** 2 <= (target.r + shell.r) ** 2:
+        return True
+
 
 def collide(ball_1, ball_2):
     """
@@ -205,9 +224,9 @@ def target_creator():
         y = random.randint(100, 600)
         Vx = random.randint(-3, 3)
         Vy = random.randint(-3, 3)
-        red = random.randint(100, 255)
-        green = random.randint(100, 255)
-        blue = random.randint(100, 255)
+        red = random.randint(50, 255)
+        green = random.randint(50, 255)
+        blue = random.randint(50, 255)
         return Target(x, y, Vx, Vy, red, green, blue, r)
 
 
@@ -221,24 +240,36 @@ def mouse_move_handler(event):
 
 
 def tick():
-    global Balls
+    global Balls, score, score_text
     """
     Считает время нажатия клавиши мыши
     :return:
     """
-    for i in range(5):
+    for i in range(n):
         if Balls[i] == 0:
             Balls[i] = target_creator()
-    for k in range(4):
-        for t in range(k, 5):
+    for k in range(n-1):
+        for t in range(k, n):
             if k != t:
                 collide(Balls[k], Balls[t])
-    for g in range(5):
+    for g in range(n):
         Balls[g].go()
     global time_counter
     time_counter += 1
-    for shell in shells:
-        shell.go(0.1)
+    for g in range(len(shells)):
+        if shells[g] != 0:
+            shells[g].go(0.1)
+            for i in range(len(Balls)):
+                if hit_checker(shells[g], Balls[i]):
+                    canv.delete(Balls[i].design)
+                    canv.delete(shells[g].oval)
+                    Balls[i] = 0
+                    shells[g] = 0
+                    score += 1
+                    canv.delete(score_text)
+                    score_text = canv.create_text(200, 60, text='Попадания score = {} '.format(score), font='Arial 25', )
+
+
     root.after(10, tick)
 
 
@@ -269,10 +300,7 @@ def time_stop(event):
 def power_maker(event):
         cannon.power = 2 * power_scale.get()
 
-root = Tk()
-fr = Frame(root)
-root.geometry('1000x800')
-canv = Canvas(root, bg='white')
+
 canv.pack(fill=BOTH, expand=1)
 
 power_scale = Scale(root, orient=HORIZONTAL,
@@ -286,9 +314,6 @@ canv.bind("<ButtonPress-1>", time_start)
 canv.bind("<ButtonRelease-1>", time_stop)
 power_scale.bind("<Motion>", power_maker)
 shells = []
-
-
-
 cannon = Cannon(canv)
 
 tick()

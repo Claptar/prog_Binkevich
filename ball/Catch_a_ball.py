@@ -46,6 +46,7 @@ def tick():
     canv.create_text(180, 60, text=miss, font='Arial 25')
 
 
+
 root.bind('<Button-1>', left_click)
 
 canv = Canvas(root, bg='white')
