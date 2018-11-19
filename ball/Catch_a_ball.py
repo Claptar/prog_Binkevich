@@ -6,13 +6,16 @@ import math
 
 root = Tk()
 root.geometry('800x600')
-score = 0
+canv = Canvas(root, bg='white')
+Score = 0
 R = 20
-miss = 0
-clicks = 0
+Miss = 0
+Clicks = 0
+Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
+Miss_label = canv.create_text(110, 60, text='missclicks = {} '.format(Miss), font='Arial 25')
 
 
-def baloon():
+def balloon():
     global circle_x, circle_y, R
     circle_x = random.randint(20, 580)
     circle_y = random.randint(20, 580)
@@ -23,33 +26,32 @@ def baloon():
 
 
 def left_click(event):
-    global clicks
+    global Clicks, Score_label, Miss_label
     x = event.x
     y = event.y
-    global score, miss
-    if math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y)) < R+1 and clicks == 0:
-        score += 1
+    global Score, Miss
+    if math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y)) < R+1 and Clicks == 0:
+        Score += 1
     elif not math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y)) < R+1:
-        miss += 1
-    clicks += 1
+        Miss += 1
+    Clicks += 1
+    canv.delete(Score_label, Miss_label)
+    Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
+    Miss_label = canv.create_text(110, 60, text='missclicks = {} '.format(Miss), font='Arial 25')
 
 
 def tick():
-    global clicks
-    clicks = 0
+    global Clicks, Score_label, Miss_label
+    Clicks = 0
     root.after(1000, tick)
     canv.delete(ALL)
-    baloon()
-    canv.create_text(80, 20, text="score", font='Arial 25')
-    canv.create_text(140, 20, text=score, font='Arial 25')
-    canv.create_text(80, 60, text="missclicks", font='Arial 25')
-    canv.create_text(180, 60, text=miss, font='Arial 25')
-
-
+    balloon()
+    Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
+    Miss_label = canv.create_text(110, 60, text='missclicks = {}'.format(Miss), font='Arial 25')
 
 root.bind('<Button-1>', left_click)
 
-canv = Canvas(root, bg='white')
+
 canv.pack(fill=BOTH, expand=1)
 
 root.after_idle(tick)
