@@ -11,8 +11,8 @@ Score = 0
 Radius = 20
 Miss = 0
 Clicks = 0
-Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
-Miss_label = canv.create_text(110, 60, text='missclicks = {} '.format(Miss), font='Arial 25')
+Score_label = canv.create_text(80, 20, text='Счёт = {}'.format(Score), font='Arial 25')
+Miss_label = canv.create_text(110, 60, text=' Промахи = {} '.format(Miss), font='Arial 25')
 
 
 def balloon():
@@ -36,14 +36,14 @@ def left_click(event):
     x = event.x
     y = event.y
     global Score, Miss
-    if math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y)) < Radius+1 and Clicks == 0:
+    if math.sqrt((circle_x - x)**2+(circle_y - y)**2) < Radius+1 and Clicks == 0:
         Score += 1
-    elif not math.sqrt((circle_x - x)*(circle_x - x)+(circle_y - y)*(circle_y - y)) < Radius+1:
+    elif not math.sqrt((circle_x - x)**2+(circle_y - y)**2) < Radius+1:
         Miss += 1
     Clicks += 1
     canv.delete(Score_label, Miss_label)
-    Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
-    Miss_label = canv.create_text(110, 60, text='missclicks = {} '.format(Miss), font='Arial 25')
+    Score_label = canv.create_text(80, 20, text='Счёт = {}'.format(Score), font='Arial 25')
+    Miss_label = canv.create_text(110, 60, text=' Промахи = {} '.format(Miss), font='Arial 25')
 
 
 def tick():
@@ -52,8 +52,8 @@ def tick():
     root.after(1000, tick)
     canv.delete(ALL)
     balloon()
-    Score_label = canv.create_text(80, 20, text='Score = {}'.format(Score), font='Arial 25')
-    Miss_label = canv.create_text(110, 60, text='missclicks = {}'.format(Miss), font='Arial 25')
+    Score_label = canv.create_text(80, 20, text='Счёт = {}'.format(Score), font='Arial 25')
+    Miss_label = canv.create_text(110, 60, text=' Промахи = {}'.format(Miss), font='Arial 25')
 
 root.bind('<Button-1>', left_click)
 
