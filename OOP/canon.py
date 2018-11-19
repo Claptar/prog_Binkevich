@@ -24,6 +24,21 @@ class Vector:
         self.x = x
         self.y = y
 
+    def normal_vector(self):
+        """
+        Нахождение вектора нормального данному
+        :return: вектор нормальный данному
+        """
+        return Vector(-self.y, self.x)
+
+    def multiplication(self, constant):
+        """
+        :param constant: Константа, на которую умножается вектор
+        :return:
+        """
+        self.x *= constant
+        self.y *= constant
+
 
 class Cannon:
     max_velocity = 100
