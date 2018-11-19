@@ -3,7 +3,7 @@ import random
 import graphics as gr
 import math
 
-n = 100
+n = 7
 
 
 class Vector:

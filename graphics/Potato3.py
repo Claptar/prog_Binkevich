@@ -3,26 +3,48 @@ import random
 
 window = gr.GraphWin("Ales' the Binkevich project", 1000, 1000)
 
-'# Рисование отдельного квадратика'
 
-
-def draw_rect(r, g, b, x, y):
+def draw_rect(red, green, blue, x, y):
+    """
+    Рисование отдельного квадратика
+    :param red: Красный цвет
+    :param green: Зелёный
+    :param blue: Синий
+    :param x: х Координата квадратика
+    :param y: y Коородината квадратика
+    :return: 
+    """
     kvadr = gr.Rectangle(gr.Point(x, y), gr.Point(x + 20, y + 20))
-    kvadr.setFill(gr.color_rgb(r, g, b))
-    kvadr.setOutline(gr.color_rgb(r, g, b))
+    kvadr.setFill(gr.color_rgb(red, green, blue))
+    kvadr.setOutline(gr.color_rgb(red, green, blue))
     kvadr.draw(window)
 
 
-def color_block(x, y, r, g, b, a, c):  # Х и Y листы координат для каждого цвета
-    i = 0  # i задаёт координаты квадратиков
+def color_block(x, y, red, green, blue, a, c): 
+    """
+    Рисование квадратиков одного цвета
+    :param x: x координата картошечки
+    :param y: y координата картошечки
+    :param red: красая компонента квадратика
+    :param green: зелёная компонента квадратика
+    :param blue: синяя компонента квадратика
+    :param a: смещение картошечки по х
+    :param c: смещение картошечки по y
+    :return: 
+    """
+    g = 0
     for t in range(len(x)):
-        draw_rect(r, g, b, a + 20 * x[i], c + 20 * y[i])  # a - смещение картошечки по х
-        i += 1  # с - смещение картошечки по y
-
-'#Рисование квадратиков разных цветов'
+        draw_rect(red, green, blue, a + 20 * x[g], c + 20 * y[g])  # a - смещение картошечки по х
+        g += 1  # с - смещение картошечки по y
 
 
 def potatoes(x, y):
+    """
+    Рисвание картошечки
+    :param x: x координата квадратика
+    :param y: y координата квадратика
+    :return:
+    """
     color_block(X1, Y1, 249, 201, 41, x, y)
     color_block(X2, Y2, 249, 190, 40, x, y)
     color_block(X3, Y3, 200, 150, 29, x, y)
@@ -49,8 +71,8 @@ X6 = [2, 2, 4, 5, 6, 8, 8]
 Y6 = [5, 6, 2, 2, 2, 2, 3]
 X7 = [5, 6, 6, 9, 9, 9]
 Y7 = [6, 5, 6, 3, 4, 5]
-for i in range (1000):
-    potatoes(random.randint(0,1000),random.randint(0,1000))
+for i in range(1000):
+    potatoes(random.randint(0, 1000), random.randint(0, 1000))
 message = gr.Text(gr.Point(window.getWidth() / 2, 120), 'Potato')
 message.setTextColor('yellow')
 message.setStyle('italic')

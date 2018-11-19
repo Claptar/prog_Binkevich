@@ -65,7 +65,6 @@ class Cannon:
         Создаёт объект снаряда (если ещё не потрачены все снаряды)
         летящий в направлении угла direction
         со скоростью, зависящей от длительности клика мышки
-        :param dt:  длительность клика мышки, мс
         :return: экземпляр снаряда типа Shell
         """
         if len(shells) < 10:
@@ -164,7 +163,7 @@ class Shell:
 class Target:
     standard_radius = 50
 
-    def __init__(self, x, y, Vx, Vy, red , green, blue, r):
+    def __init__(self, x, y, Vx, Vy, red, green, blue, r):
         self.x = x
         self.y = y
         self.Vx = Vx
@@ -177,7 +176,6 @@ class Target:
         Сдвигает шарик-мишень исходя из его кинематических характеристик
         и длины кванта времени dt
         в новое положение, а также меняет его скорость.
-        :param dt:
         :return:
         """
         if (self.x + self.r > 1000) or (self.x - self.r < 300):
@@ -267,7 +265,7 @@ def tick():
                     shells[g] = 0
                     score += 1
                     canv.delete(score_text)
-                    score_text = canv.create_text(200, 60, text='Попадания score = {} '.format(score), font='Arial 25', )
+                    score_text = canv.create_text(200, 60, text='Попадания score = {} '.format(score), font='Arial 25')
 
 
     root.after(10, tick)
