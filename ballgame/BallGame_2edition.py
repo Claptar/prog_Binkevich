@@ -11,13 +11,15 @@ Balls = []
 
 
 class Ball:
-    def __init__(self, x, y, Vx, Vy, red , green, blue, r):
-        self.x = x
-        self.y = y
-        self.Vx = Vx
-        self.Vy = Vy
-        self.design = canvas.create_oval(x, y, x + r, y + r, fill=gr.color_rgb(red, green, blue))
-        self.r = r
+    def __init__(self, x_coordinate, y_coordinate, v_x, v_y,
+                 red_component, green_component, blue_component, ball_radius):
+        self.x = x_coordinate
+        self.y = y_coordinate
+        self.Vx = v_x
+        self.Vy = v_y
+        self.design = canvas.create_oval(x, y, x + ball_radius, y + ball_radius,
+                                         fill=gr.color_rgb(red_component, green_component, blue_component))
+        self.r = ball_radius
 
     def go(self):
         if (self.x + self.r > 600) or (self.x - self.r < 0):
@@ -29,23 +31,23 @@ class Ball:
         self.y += self.Vy
 
 for i in range(10):
-    r = random.randint(20, 40)
-    x =
+    radius = random.randint(20, 40)
+    x = random.randint(100, 300)
     y = random.randint(100, 300)
-    Vx = random.randint(-10, 10)
-    Vy = random.randint(-10, 10)
+    Vx, Vy = 0, 0
+    while Vx == 0 and Vy == 0:
+        Vx = random.randint(-10, 10)
+        Vy = random.randint(-10, 10)
     red = random.randint(100, 255)
     green = random.randint(100, 255)
     blue = random.randint(100, 255)
-    Balls.append(
+    ball_i = Ball(x, y, Vx, Vy, red, green, blue, radius)
+    Balls.append(ball_i)
+    """Balls.append(
         Ball(x=random.randint(100, 300),
                   y=random.randint(100, 300), Vx, Vy, red, green, blue, r)
-    )
+    )"""
 
-
-
-def foo():
-    print(x)
 
 def tick():
     for g in range(10):
