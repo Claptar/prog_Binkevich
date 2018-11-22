@@ -317,6 +317,10 @@ def time_start(event):
     """
     global time_counter
     cannon.start_time = time_counter
+    line_power = canv.create_line(20, 200,
+                                     time_counter + 20,
+                                     200,
+                                     width=20, fill="blue")
 
 
 def time_stop(event):
