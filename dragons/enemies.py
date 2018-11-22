@@ -27,10 +27,28 @@ class Dragon(Enemy):
 
 class GreenDragon(Dragon):
     def __init__(self):
-        self._healthfull = 200
-        self._health = 200
+        self._healthfull = 50
+        self._health = 50
         self._attack = 10
-        self._experience = 20
+        self._experience = 50
+        self._name = 'Зелёный Дракон'
+
+
+class RedDragon (Dragon):
+    def __init__(self):
+        self._healthfull = 100
+        self._health = 100
+        self._attack = 20
+        self._experience = 60
+        self._name = 'Зелёный Дракон'
+
+
+class BlackDragon(Dragon):
+    def __init__(self):
+        self._healthfull = 150
+        self._health = 150
+        self._attack = 30
+        self._experience = 70
         self._name = 'Зелёный Дракон'
 
 
