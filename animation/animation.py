@@ -1,6 +1,6 @@
 from tkinter import *
 import graphics as gr
-
+import random
 
 root = Tk()
 root.geometry('800x600')
@@ -8,14 +8,17 @@ canvas = Canvas(root, bg='white')
 Vx_POTATO = 5
 X_POTATO = 0
 rect_size = 20
+LIST = []
 
 
 class Potatoe:
 
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, size, vx, vy):
         self.x = x
         self.y = y
         self.size = size
+        self.vx = vx
+        self.vy = vy
 
     def view(self):
         """
@@ -32,14 +35,45 @@ class Potatoe:
         draw_rect(211, 163, 42, self.x + self.size * 6, self.y + self.size * 8, self.size)
         draw_rect(250, 234, 147, self.x + self.size * 2, self.y + self.size * 4, self.size)
 
+    def go(self):
+        self.view()
+        if (self.x > 510) or (self.x < 0):
+            self.vx *= -1
+        elif (self.y > 510) or (self.y < 0):
+            self.vy *= -1
+        self.x += self.vx
+        self.y += self.vy
 
-def potatoe_move():
-    global X_POTATO, rect_size
+
+def big_potato():
+    """
+    двигает большую картошину
+    :return:
+    """
+    global POTATO, LIST
     canvas.delete(ALL)
-    Potatoe(X_POTATO, 300, rect_size).view()
-    if X_POTATO < 600:
-        X_POTATO += 5
-        root.after(100, potatoe_move)
+    POTATO.go()
+    canvas.create_rectangle(2, 2, 550, 550)
+    if POTATO.x < 300:
+        root.after(30, big_potato)
+    else:
+        canvas.delete(ALL)
+        for i in range(20):
+            LIST.append(Potatoe(510, random.randint(200, 400), 3, random.randint(-5, -3), random.randint(-5, 5)))
+        potatoe_crash()
+
+
+def potatoe_crash():
+    """
+    создаёт и двигает маленькие картошинки
+    :return:
+    """
+    global LIST
+    canvas.delete(ALL)
+    canvas.create_rectangle(2, 2, 550, 550)
+    for i in range(20):
+        LIST[i-1].go()
+    root.after(10, potatoe_crash)
 
 
 def draw_rect(red, green, blue, x, y, size):
@@ -50,11 +84,12 @@ def draw_rect(red, green, blue, x, y, size):
     :param blue: Синий
     :param x: х Координата квадратика
     :param y: y Коородината квадратика
+    :param size: размер картошечки
     :return:
     """
-    kvadr = canvas.create_rectangle(x, y, x + size, y + size,
-                                    outline=gr.color_rgb(red, green, blue),
-                                    fill=gr.color_rgb(red, green, blue))
+    canvas.create_rectangle(x, y, x + size, y + size,
+                            outline=gr.color_rgb(red, green, blue),
+                            fill=gr.color_rgb(red, green, blue))
 
 
 def color_block(x, y, red, green, blue, a, c, size):
@@ -75,6 +110,7 @@ def color_block(x, y, red, green, blue, a, c, size):
         draw_rect(red, green, blue, a + size * x[g], c + size * y[g], size)  # a - смещение картошечки по х
         g += 1  # с - смещение картошечки по y
 
+
 """Набор координат для квадратиков каждого цвета (Данным образом бысрее записывать координаты)"""
 X1 = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7, 7, 8, 8, 8]
 Y1 = [4, 5, 6, 7, 3, 7, 8, 2, 6, 7, 8, 7, 8, 1, 7, 8, 1, 1, 4, 5, 4, 5, 6]
@@ -93,9 +129,6 @@ Y7 = [6, 5, 6, 3, 4, 5]
 
 
 canvas.pack(fill=BOTH, expand=1)
-
-potatoe_move()
+POTATO = Potatoe(0, 200, 20, 5, 0)
+big_potato()
 root.mainloop()
-
-
-
