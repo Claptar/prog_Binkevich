@@ -34,10 +34,8 @@ for i in range(10):
     radius = random.randint(20, 40)
     x = random.randint(100, 300)
     y = random.randint(100, 300)
-    Vx, Vy = 0, 0
-    while Vx == 0 and Vy == 0:
-        Vx = random.randint(-10, 10)
-        Vy = random.randint(-10, 10)
+    Vx = random.randint(1, 10)*random.choice([1, -1])
+    Vy = random.randint(1, 10)*random.choice([1, -1])
     red = random.randint(100, 255)
     green = random.randint(100, 255)
     blue = random.randint(100, 255)
