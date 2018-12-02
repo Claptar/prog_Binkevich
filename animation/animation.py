@@ -10,10 +10,33 @@ X_POTATO = 0
 rect_size = 20
 
 
+class Potatoe:
+
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.size = size
+
+    def view(self):
+        """
+            Рисование картошечки
+            """
+        color_block(X1, Y1, 249, 201, 41, self.x, self.y, self.size)
+        color_block(X2, Y2, 249, 190, 40, self.x, self.y, self.size)
+        color_block(X3, Y3, 200, 150, 29, self.x, self.y, self.size)
+        color_block(X4, Y4, 148, 103, 21, self.x, self.y, self.size)
+        color_block(X5, Y5, 252, 240, 184, self.x, self.y, self.size)
+        color_block(X6, Y6, 250, 223, 116, self.x, self.y, self.size)
+        color_block(X7, Y7, 250, 223, 110, self.x, self.y, self.size)
+        draw_rect(226, 177, 52, self.x + self.size * 4, self.y + self.size * 4, self.size)
+        draw_rect(211, 163, 42, self.x + self.size * 6, self.y + self.size * 8, self.size)
+        draw_rect(250, 234, 147, self.x + self.size * 2, self.y + self.size * 4, self.size)
+
+
 def potatoe_move():
     global X_POTATO, rect_size
     canvas.delete(ALL)
-    potatoes(X_POTATO, 300, rect_size)
+    Potatoe(X_POTATO, 300, rect_size).view()
     if X_POTATO < 600:
         X_POTATO += 5
         root.after(100, potatoe_move)
@@ -51,25 +74,6 @@ def color_block(x, y, red, green, blue, a, c, size):
     for t in range(len(x)):
         draw_rect(red, green, blue, a + size * x[g], c + size * y[g], size)  # a - смещение картошечки по х
         g += 1  # с - смещение картошечки по y
-
-
-def potatoes(x, y, size):
-    """
-    Рисвание картошечки
-    :param x: смещение картошечки по x
-    :param y: смещение картошечки по y
-    :return:
-    """
-    color_block(X1, Y1, 249, 201, 41, x, y, size)
-    color_block(X2, Y2, 249, 190, 40, x, y, size)
-    color_block(X3, Y3, 200, 150, 29, x, y, size)
-    color_block(X4, Y4, 148, 103, 21, x, y, size)
-    color_block(X5, Y5, 252, 240, 184, x, y, size)
-    color_block(X6, Y6, 250, 223, 116, x, y, size)
-    color_block(X7, Y7, 250, 223, 110, x, y, size)
-    draw_rect(226, 177, 52, x + size * 4, y + size * 4, size)
-    draw_rect(211, 163, 42, x + size * 6, y + size * 8, size)
-    draw_rect(250, 234, 147, x + size * 2, y + size * 4, size)
 
 """Набор координат для квадратиков каждого цвета (Данным образом бысрее записывать координаты)"""
 X1 = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7, 7, 8, 8, 8]
