@@ -1,8 +1,8 @@
 import turtle
-a=True
-x=0
-l=int(input())
-b=180 + 180/l
+a = True
+x = 0
+l = int(input())
+b = 180 + 180/l
 turtle.shape('turtle')
 
 while a:

@@ -1,5 +1,6 @@
 import turtle
 
+
 def curve(l, n):
     if n == 0:
         turtle.forward(l)
