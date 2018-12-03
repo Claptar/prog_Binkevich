@@ -5,51 +5,51 @@ r.lm('task1')
 def task():
 	pass
 	#------- пишите код здесь -----
-	r.right();
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.up();
-	r.rt();
-	r.pt();
-	r.left(2);
-	r.pt();
-	r.left();
-	r.pt();
-	r.left(2);
-	r.pt();
-	r.left();
-	r.pt();
-	r.left(2);
-	r.pt();
-	r.left();
-	r.pt();
-	r.left(2);
-	r.pt();
-	r.left();
-	r.pt();
-	r.left(2);
-	r.pt();
-	r.up();
-	r.right();
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	r.right(3);
-	r.paint();
-	
-	
-	#------- пишите код здесь -----
+	r.right()
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.up()
+	r.rt()
+	r.pt()
+	r.left(2)
+	r.pt()
+	r.left()
+	r.pt()
+	r.left(2)
+	r.pt()
+	r.left()
+	r.pt()
+	r.left(2)
+	r.pt()
+	r.left()
+	r.pt()
+	r.left(2)
+	r.pt()
+	r.left()
+	r.pt()
+	r.left(2)
+	r.pt()
+	r.up()
+	r.right()
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+	r.right(3)
+	r.paint()
+
+
+#------- пишите код здесь -----
 r.start(task)
 
 #Отступ слева (tab) сохранять!

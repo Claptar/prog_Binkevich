@@ -7,29 +7,25 @@ def task():
 	#------- пишите код здесь -----
 
 	for x in range (4):
-		for x in range (3):
-			r.paint();
-			r.down(3);
-		r.right();
-		r.up(2);
-		r.paint();
-		for x in range (2):
-			r.up(3);
-			r.paint();
-		r.right();
-		r.up();
-		for x in range (3):
-			r.paint();
-			r.down(3);
-		r.up(9);
-		r.right(2);
+		for i in range(3):
+			r.paint()
+			r.down(3)
+		r.right()
+		r.up(2)
+		r.paint()
+		for i in range(2):
+			r.up(3)
+			r.paint()
+		r.right()
+		r.up()
+		for i in range(3):
+			r.paint()
+			r.down(3)
+		r.up(9)
+		r.right(2)
 
 
-
-
-
-
-	#------- пишите код здесь -----
+#------- пишите код здесь -----
 r.start(task)
 
 #Отступ слева (tab) сохранять!

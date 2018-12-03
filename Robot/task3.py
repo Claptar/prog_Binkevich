@@ -7,19 +7,18 @@ def task():
 	#------- пишите код здесь -----
 
 	while r.freeRight():
-		r.right();
+		r.right()
 	while r.freeUp():
-		r.up();
+		r.up()
 
 	for x in range(5):
-			r.down();
-			r.left();
-			r.paint();
-			r.down();
+			r.down()
+			r.left()
+			r.paint()
+			r.down()
 
 
-
-	#------- пишите код здесь -----
+#------- пишите код здесь -----
 r.start(task)
 
 #Отступ слева (tab) сохранять!

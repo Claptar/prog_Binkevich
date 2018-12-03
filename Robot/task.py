@@ -6,29 +6,19 @@ def task():
 	pass
 	#------- пишите код здесь -----
 
-	while r.freeLeft()or r.freeUp() :
+	while r.freeLeft()or r.freeUp():
 		if r.freeUp():
-			r.up();
-		if r.freeLeft() :
-			r.left();
-	r.down(3);
-	r.right(4);
-	for x in range (4):
-		r.paint();
-		r.right();
+			r.up()
+		if r.freeLeft():
+			r.left()
+	r.down(3)
+	r.right(4)
+	for x in range(4):
+		r.paint()
+		r.right()
 
 
-
-
-
-
-
-
-
-
-
-
-	#------- пишите код здесь -----
+#------- пишите код здесь -----
 r.start(task)
 
 #Отступ слева (tab) сохранять!

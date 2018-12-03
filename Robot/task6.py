@@ -6,29 +6,22 @@ def task():
 	pass
 	#------- пишите код здесь -----
 
-	len=int(input("Введите длинну "));
-	hight=int(input("Введите высоту"));
-	while (len>15)or(hight>10):
-		print("Введите высоту меньше 24 и ширину меньше 10");
-	r.right(int((15-len)/2));
-	for x in range (len-1):
-		r.paint();
-		r.right();
-	r.paint();
-	r.left((int(len/2+1)));
-	for x in range (hight-1):
-		r.down();
-		r.paint();
+	lenght = int(input("Введите длинну "))
+	hight = int(input("Введите высоту"))
+	while (lenght > 15)or(hight > 10):
+		print("Введите высоту меньше 24 и ширину меньше 10")
+	r.right(int((24-lenght)/2))
+	for x in range(lenght-1):
+		r.paint()
+		r.right()
+	r.paint()
+	r.left(int(lenght/2))
+	for x in range(hight-1):
+		r.down()
+		r.paint()
 
 
-
-
-
-
-
-
-
-	#------- пишите код здесь -----
+#------- пишите код здесь -----
 r.start(task)
 
 #Отступ слева (tab) сохранять!
