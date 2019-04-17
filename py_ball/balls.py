@@ -3,7 +3,9 @@ import random
 import math
 
 pygame.init()
-screen = pygame.display.set_mode((640, 480),) # try out larger values and see what happens !
+WIN_width = 640
+WIN_height = 480
+screen = pygame.display.set_mode((800, WIN_height),) # try out larger values and see what happens !
 background = pygame.Surface(screen.get_size())
 background_color = (200, 90, 100)
 background.fill(background_color)
@@ -59,7 +61,7 @@ class Ball:
     def __init__(self):
         self.x = random.randint(40, 500)
         self.y = random.randint(40, 400)
-        self.radius = 20
+        self.radius = 10
         self.color = (random.randint(0, 255),
                       random.randint(0, 255),
                       random.randint(0, 255))
@@ -71,10 +73,29 @@ class Ball:
             self.vx *= -1
         elif self.y + self.radius >= 480 or self.y + self.radius <= 50:
             self.vy *= -1
+        out_of_range(self)
         pygame.draw.circle(screen, background_color, (int(self.x), int(self.y)), self.radius)
         self.x += self.vx
         self.y += self.vy
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+
+
+def out_of_range(ball):
+    """
+    Предотвращение вылета шарика за границы сосуда
+    """
+    if math.fabs(ball.x) < ball.radius:
+        n = (ball.radius - ball.x)/math.fabs(ball.vx)
+        ball.x += (n - 0.3)*math.fabs(ball.vx)
+    elif (math.fabs(WIN_width - ball.x) < ball.radius) and (math.fabs(WIN_width - ball.x) < ball.vx):
+        n = (ball.x - WIN_width - ball.radius)/math.fabs(ball.vx)
+        ball.x += (n - 0.3)*math.fabs(ball.vx)
+    elif math.fabs(ball.y) < ball.radius:
+        n = (ball.radius - ball.y)/math.fabs(ball.vy)
+        ball.y += (n - 0.3)*math.fabs(ball.vy)
+    elif (math.fabs(WIN_height - ball.y) < ball.radius) and (math.fabs(WIN_height - ball.y) < ball.vy):
+        n = (ball.y - WIN_height - ball.radius)/math.fabs(ball.vy)
+        ball.y += (n - 0.3)*math.fabs(ball.vy)
 
 
 def collide(ball_1, ball_2):
@@ -94,7 +115,7 @@ def collide(ball_1, ball_2):
         v_normal_1 = v1.vector_scal_multiplication(normal)
         v_normal_2 = v2.vector_scal_multiplication(normal)
         v_line_1, v_line_2 = v_line_2, v_line_1
-        r = 40 - math.sqrt((ball_1.x - ball_2.x) ** 2 + (ball_1.y - ball_2.y) ** 2)
+        r = ball_1.radius * 2 - math.sqrt((ball_1.x - ball_2.x) ** 2 + (ball_1.y - ball_2.y) ** 2)
         if r > (math.fabs(v_line_2) + math.fabs(v_line_1)):
             n = r /(math.fabs(v_line_2) + math.fabs(v_line_1))
             if v_line_1 > 0:
@@ -111,9 +132,8 @@ def collide(ball_1, ball_2):
 
 
 
-
 clock = pygame.time.Clock()
-n = 100
+n = 180
 balls = []
 for i in range(0, n):
     balls.append(Ball())
