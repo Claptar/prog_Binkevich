@@ -30,8 +30,8 @@ class Vector:
         :param constant: Константа, на которую умножается вектор
         :return:
         """
-        self.x *= constant
-        self.y *= constant
+
+        return Vector(self.x*constant, self.y*constant)
 
     def vector_scal_multiplication(self, vector):
         """
@@ -57,8 +57,8 @@ class Vector:
 
 class Ball:
     def __init__(self):
-        self.x = random.randint(100, 400)
-        self.y = random.randint(100, 300)
+        self.x = random.randint(40, 500)
+        self.y = random.randint(40, 400)
         self.radius = 20
         self.color = (random.randint(0, 255),
                       random.randint(0, 255),
@@ -82,6 +82,8 @@ def collide(ball_1, ball_2):
     Рассчёт столкновения двух шариков
     """
     if (ball_1.x - ball_2.x) ** 2 + (ball_1.y - ball_2.y) ** 2 <= (2*ball_1.radius) ** 2:
+        r1 = Vector(ball_1.x, ball_1.y)
+        r2 = Vector(ball_2.x, ball_2.y)
         v1 = Vector(ball_1.vx, ball_1.vy)
         v2 = Vector(ball_2.vx, ball_2.vy)
         line = Vector(ball_1.x - ball_2.x, ball_1.y - ball_2.y)
@@ -92,6 +94,16 @@ def collide(ball_1, ball_2):
         v_normal_1 = v1.vector_scal_multiplication(normal)
         v_normal_2 = v2.vector_scal_multiplication(normal)
         v_line_1, v_line_2 = v_line_2, v_line_1
+        r = 40 - math.sqrt((ball_1.x - ball_2.x) ** 2 + (ball_1.y - ball_2.y) ** 2)
+        if r > (math.fabs(v_line_2) + math.fabs(v_line_1)):
+            n = r /(math.fabs(v_line_2) + math.fabs(v_line_1))
+            if v_line_1 > 0:
+                r1 = r1.sum(line.multiplication(n - 0.5))
+                ball_1.x, ball_1.y = r1.x, r1.y
+            elif v_line_2 > 0:
+                r2 = r2.sum(line.multiplication(n - 0.5))
+                ball_2.x, ball_2.y = r2.x, r2.y
+
         ball_1.vx = v_line_1 * line.x + v_normal_1 * normal.x
         ball_1.vy = v_line_1 * line.y + v_normal_1 * normal.y
         ball_2.vx = v_line_2 * line.x + v_normal_2 * normal.x
@@ -99,8 +111,9 @@ def collide(ball_1, ball_2):
 
 
 
+
 clock = pygame.time.Clock()
-n = 6
+n = 100
 balls = []
 for i in range(0, n):
     balls.append(Ball())
@@ -110,10 +123,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    screen.fill(background_color)
     for ball in balls:
         ball.go()
     for i in range (0, n):
-        for t in range (i, n):
+        for t in range(i, n):
             if i != t:
                 collide(balls[i], balls[t])
     pygame.display.flip()
