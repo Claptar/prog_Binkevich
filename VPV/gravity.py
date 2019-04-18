@@ -5,7 +5,7 @@ import math
 pygame.init()
 WIN_width = 640
 WIN_height = 480
-screen = pygame.display.set_mode((800, 600),) # try out larger values and see what happens !
+screen = pygame.display.set_mode((800, 600),)  # try out larger values and see what happens !
 background = pygame.Surface(screen.get_size())
 background_color = (200, 90, 100)
 background.fill(background_color)
@@ -62,9 +62,7 @@ class Ball:
         self.x = random.randint(40, 500)
         self.y = random.randint(40, 400)
         self.radius = 5
-        self.color = (random.randint(0, 255),
-                      random.randint(0, 255),
-                      random.randint(0, 255))
+        self.color = (255, 255, 255)
         self.vx = random.randint(-3, 3)
         self.vy = -1
 
@@ -86,6 +84,11 @@ class Ball:
         self.vy += ay * dt
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
 
+    def click_create(self, x, y, color):
+        self.x = x
+        self.y = y
+        self.color = color
+
 
 def out_of_range(ball):
     """
@@ -93,14 +96,14 @@ def out_of_range(ball):
     """
     if math.fabs(ball.x) < ball.radius:
         n = (ball.radius - ball.x)/math.fabs(ball.vx)
-        ball.x += (n - 0.3)*math.fabs(ball.vx)
+        ball.x += (n + 0.3)*math.fabs(ball.vx)
     elif (math.fabs(WIN_width - ball.x) < ball.radius) and (math.fabs(WIN_width - ball.x) < ball.vx):
         n = (ball.x - WIN_width - ball.radius)/math.fabs(ball.vx)
         ball.x += (n - 0.3)*math.fabs(ball.vx)
 
     if math.fabs(ball.y) < ball.radius:
         n = (ball.radius - ball.y)/math.fabs(ball.vy)
-        ball.y += (n - 0.3)*math.fabs(ball.vy)
+        ball.y += (n + 0.3)*math.fabs(ball.vy)
     elif (math.fabs(WIN_height - ball.y) < ball.radius) and (math.fabs(WIN_height - ball.y) < ball.vy):
         n = (ball.y - WIN_height - ball.radius)/math.fabs(ball.vy)
         ball.y += (n - 0.3)*math.fabs(ball.vy)
@@ -127,7 +130,7 @@ def collide(ball_1, ball_2):
         if r > (math.fabs(v_line_2) + math.fabs(v_line_1)):
             n = r / (math.fabs(v_line_2) + math.fabs(v_line_1))
             if v_line_1 > 0:
-                r1 = r1.sum(line.multiplication(n))
+                r1 = r1.sum(line.multiplication(n + 0.5))
                 ball_1.x, ball_1.y = r1.x, r1.y
             elif v_line_2 > 0:
                 r2 = r2.sum(line.multiplication(n))
@@ -143,7 +146,11 @@ def collide(ball_1, ball_2):
 
 clock = pygame.time.Clock()
 n = 200
+sum_v = 0
+sr_v = sum_v / n
+sum_y = 0
 balls = []
+k = 0
 for i in range(0, n):
     balls.append(Ball())
 running = True
@@ -152,11 +159,32 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                balls.append(Ball())
+                balls[len(balls) - 1].x = event.pos[0]
+                balls[len(balls) - 1].y = event.pos[1]
+                balls[len(balls) - 1].color = (255, 0, 0)
+                n += 1
+
     screen.fill(background_color)
     for ball in balls:
         ball.go()
-    for i in range (0, n):
-        for t in range(i, n):
+        sum_v += math.sqrt(balls[i].vx ** 2 + balls[i].vy ** 2)
+        sum_y += 460 - ball.y
+        if ball.x > 660 or ball.x < -20 or ball.y > 500 or ball.y < -10:
+            n += 1
+    print("Средняя скорость шариков = ", sum_v / (n - k))
+    print("Средняя высота шариков = ", sum_y / (n - k))
+    print("Число вылетивших = ", k)
+    sum_y = 0
+    sum_v = 0
+    k = 0
+    for i in range(0, n):
+
+        for t in range(i,len(balls)):
             if i != t:
                 collide(balls[i], balls[t])
+
+    sum_v = 0
     pygame.display.flip()
