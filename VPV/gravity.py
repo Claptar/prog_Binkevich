@@ -1,11 +1,13 @@
 import pygame
 import random
 import math
+import pylab
+from matplotlib import mlab
 
 pygame.init()
 WIN_width = 640
-WIN_height = 480
-screen = pygame.display.set_mode((800, 600),)  # try out larger values and see what happens !
+WIN_height = 800
+screen = pygame.display.set_mode((WIN_width, WIN_height),)  # try out larger values and see what happens !
 background = pygame.Surface(screen.get_size())
 background_color = (200, 90, 100)
 background.fill(background_color)
@@ -67,9 +69,9 @@ class Ball:
         self.vy = -1
 
     def go(self):
-        if self.x + self.radius >= 640 or self.x + self.radius <= 20:
+        if self.x + self.radius >= WIN_width or self.x + self.radius <= 20:
             self.vx *= -1
-        elif self.y + self.radius >= 480 or self.y + self.radius <= 20:
+        elif self.y + self.radius >= WIN_height:
             self.vy *= -1
         out_of_range(self)
         ax, ay = 0, 9.81
@@ -101,10 +103,7 @@ def out_of_range(ball):
         n = (ball.x - WIN_width - ball.radius)/math.fabs(ball.vx)
         ball.x += (n - 0.3)*math.fabs(ball.vx)
 
-    if math.fabs(ball.y) < ball.radius:
-        n = (ball.radius - ball.y)/math.fabs(ball.vy)
-        ball.y += (n + 0.3)*math.fabs(ball.vy)
-    elif (math.fabs(WIN_height - ball.y) < ball.radius) and (math.fabs(WIN_height - ball.y) < ball.vy):
+    if (math.fabs(WIN_height - ball.y) < ball.radius) and (math.fabs(WIN_height - ball.y) < ball.vy):
         n = (ball.y - WIN_height - ball.radius)/math.fabs(ball.vy)
         ball.y += (n - 0.3)*math.fabs(ball.vy)
 
@@ -130,7 +129,7 @@ def collide(ball_1, ball_2):
         if r > (math.fabs(v_line_2) + math.fabs(v_line_1)):
             n = r / (math.fabs(v_line_2) + math.fabs(v_line_1))
             if v_line_1 > 0:
-                r1 = r1.sum(line.multiplication(n + 0.5))
+                r1 = r1.sum(line.multiplication(n + 0.1))
                 ball_1.x, ball_1.y = r1.x, r1.y
             elif v_line_2 > 0:
                 r2 = r2.sum(line.multiplication(n))
@@ -141,8 +140,9 @@ def collide(ball_1, ball_2):
         ball_2.vx = v_line_2 * line.x + v_normal_2 * normal.x
         ball_2.vy = v_line_2 * line.y + v_normal_2 * normal.y
 
-
-
+Y_scale = []
+X_scale = []
+X = 0
 
 clock = pygame.time.Clock()
 n = 200
@@ -170,21 +170,28 @@ while running:
     screen.fill(background_color)
     for ball in balls:
         ball.go()
-        sum_v += math.sqrt(balls[i].vx ** 2 + balls[i].vy ** 2)
-        sum_y += 460 - ball.y
-        if ball.x > 660 or ball.x < -20 or ball.y > 500 or ball.y < -10:
-            n += 1
+        sum_v += math.sqrt(ball.vx ** 2 + ball.vy ** 2)
+        sum_y += WIN_height-ball.y
+        if ball.x > WIN_width or ball.x < -20 or ball.y > WIN_height:
+            k += 1
     print("Средняя скорость шариков = ", sum_v / (n - k))
     print("Средняя высота шариков = ", sum_y / (n - k))
-    print("Число вылетивших = ", k)
+    print("Число вылетевших = ", k)
+    X += 1/60
+    Y_scale.append(sum_y / (n - k))
+    X_scale.append(X)
     sum_y = 0
     sum_v = 0
     k = 0
     for i in range(0, n):
 
-        for t in range(i,len(balls)):
+        for t in range(i, len(balls)):
             if i != t:
                 collide(balls[i], balls[t])
 
     sum_v = 0
+    pylab.clf()
+    pylab.plot(X_scale, Y_scale)
+    pylab.draw()
+    pylab.pause(1/60)
     pygame.display.flip()
