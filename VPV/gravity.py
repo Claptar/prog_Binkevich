@@ -2,7 +2,9 @@ import pygame
 import random
 import math
 import pylab
+from threading import Thread
 from matplotlib import mlab
+import numpy
 
 pygame.init()
 WIN_width = 640
@@ -63,7 +65,7 @@ class Ball:
     def __init__(self):
         self.x = random.randint(40, 500)
         self.y = random.randint(40, 400)
-        self.radius = 5
+        self.radius = 7
         self.color = (255, 255, 255)
         self.vx = random.randint(-3, 3)
         self.vy = -1
@@ -151,47 +153,73 @@ sr_v = sum_v / n
 sum_y = 0
 balls = []
 k = 0
-for i in range(0, n):
-    balls.append(Ball())
-running = True
-while running:
-    clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                balls.append(Ball())
-                balls[len(balls) - 1].x = event.pos[0]
-                balls[len(balls) - 1].y = event.pos[1]
-                balls[len(balls) - 1].color = (255, 0, 0)
-                n += 1
 
-    screen.fill(background_color)
-    for ball in balls:
-        ball.go()
-        sum_v += math.sqrt(ball.vx ** 2 + ball.vy ** 2)
-        sum_y += WIN_height-ball.y
-        if ball.x > WIN_width or ball.x < -20 or ball.y > WIN_height:
-            k += 1
-    print("Средняя скорость шариков = ", sum_v / (n - k))
-    print("Средняя высота шариков = ", sum_y / (n - k))
-    print("Число вылетевших = ", k)
-    X += 1/60
-    Y_scale.append(sum_y / (n - k))
-    X_scale.append(X)
-    sum_y = 0
-    sum_v = 0
-    k = 0
+
+def vpv_starter():
+    global X, n, X_scale, Y_scale, sum_y, sum_v, k
     for i in range(0, n):
+        balls.append(Ball())
+    running = True
+    while running:
+        h_sc = []
+        h = []
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    balls.append(Ball())
+                    balls[len(balls) - 1].x = event.pos[0]
+                    balls[len(balls) - 1].y = event.pos[1]
+                    balls[len(balls) - 1].color = (255, 0, 0)
+                    n += 1
 
-        for t in range(i, len(balls)):
-            if i != t:
-                collide(balls[i], balls[t])
+        screen.fill(background_color)
+        for ball in balls:
+            ball.go()
+            sum_v += math.sqrt(ball.vx ** 2 + ball.vy ** 2)
+            h.append(WIN_height-ball.y)  #TODO: сделать апроксимацию экспонентой
+            sum_y += WIN_height-ball.y
+            if ball.x > WIN_width or ball.x < -20 or ball.y > WIN_height:
+                k += 1
+        for i in range(0, 80, 1):
+            h = numpy.array(h)
+            number = len(h[h // 10 == i])
+            print('number = ', number)
+            h_sc.append(number)
+            print(h_sc)
+        pygame.display.flip()
+        Y_scale = h_sc
+        X_scale = range(0, 80, 1)
+        sum_y = 0
+        sum_v = 0
+        k = 0
+        h_sc = []
+        for i in range(0, n):
 
-    sum_v = 0
-    pylab.clf()
-    pylab.plot(X_scale, Y_scale)
-    pylab.draw()
-    pylab.pause(1/60)
-    pygame.display.flip()
+            for t in range(i, len(balls)):
+                if i != t:
+                    collide(balls[i], balls[t])
+
+        sum_v = 0
+
+
+def plot_starter():
+    global X_scale, Y_scale
+    while thread1.is_alive():
+        try:
+            pylab.clf()
+            pylab.plot(X_scale, Y_scale, 'o')
+            pylab.draw()
+            pylab.pause(1)
+        except Exception as e:
+            print(e)
+
+
+thread1 = Thread(target=vpv_starter)
+thread2 = Thread(target=plot_starter)
+
+thread1.start()
+thread2.start()
+
