@@ -5,6 +5,7 @@ import pylab
 from threading import Thread
 from matplotlib import mlab
 import numpy
+import matplotlib.pyplot as plt
 
 pygame.init()
 WIN_width = 640
@@ -94,6 +95,7 @@ class Ball:
         self.color = color
 
 
+
 def out_of_range(ball):
     """
     Предотвращение вылета шарика за границы сосуда
@@ -169,11 +171,17 @@ def vpv_starter():
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    balls.append(Ball())
-                    balls[len(balls) - 1].x = event.pos[0]
-                    balls[len(balls) - 1].y = event.pos[1]
-                    balls[len(balls) - 1].color = (255, 0, 0)
-                    n += 1
+                    plt.plot(X_scale, Y_scale, 'o')
+                    plt.grid(True)
+                    plt.show()
+                    y = []
+                    for i in range(10, 800, 10):
+                        y.append(Y_scale[i//10] - Y_scale[i//10 - 1])
+                    x = X_scale[:-1]
+                    plt.plot(x, y, 'o')
+                    plt.grid(True)
+                    plt.show()
+
 
         screen.fill(background_color)
         for ball in balls:
@@ -183,15 +191,13 @@ def vpv_starter():
             sum_y += WIN_height-ball.y
             if ball.x > WIN_width or ball.x < -20 or ball.y > WIN_height:
                 k += 1
-        for i in range(0, 80, 1):
+        for i in range(0, 800, 10):  #TODO: убрать нулевые элементы
             h = numpy.array(h)
-            number = len(h[h // 10 == i])
-            print('number = ', number)
+            number = len(h[h <= i])
             h_sc.append(number)
-            print(h_sc)
         pygame.display.flip()
         Y_scale = h_sc
-        X_scale = range(0, 80, 1)
+        X_scale = range(0, 800, 10)
         sum_y = 0
         sum_v = 0
         k = 0
@@ -218,8 +224,8 @@ def plot_starter():
 
 
 thread1 = Thread(target=vpv_starter)
-thread2 = Thread(target=plot_starter)
+#thread2 = Thread(target=plot_starter)
 
 thread1.start()
-thread2.start()
+#thread2.start()
 
