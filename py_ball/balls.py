@@ -58,15 +58,15 @@ class Vector:
 
 
 class Ball:
-    def __init__(self):
-        self.x = random.randint(40, 500)
-        self.y = random.randint(40, 400)
-        self.radius = 10
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.radius = 5
         self.color = (random.randint(0, 255),
                       random.randint(0, 255),
                       random.randint(0, 255))
-        self.vx = random.randint(-3, 3)
-        self.vy = random.randint(-3, 3)
+        self.vx = random.randint(-2, 2)
+        self.vy = random.randint(-2, 2)
 
     def go(self):
         if self.x + self.radius >= 640 or self.x + self.radius <= 50:
@@ -133,11 +133,15 @@ def collide(ball_1, ball_2):
 
 
 clock = pygame.time.Clock()
-n = 180
+k = 16
+m = 13
+n = (k-1)*(m-1)
 balls = []
-for i in range(0, n):
-    balls.append(Ball())
+for j in range(1, k):
+    for i in range(1, m):
+        balls.append(Ball(20 + 40*i, 20 + 40*j))
 running = True
+print(len(balls))
 while running:
     clock.tick(60)
     for event in pygame.event.get():
@@ -146,7 +150,7 @@ while running:
     screen.fill(background_color)
     for ball in balls:
         ball.go()
-    for i in range (0, n):
+    for i in range(0, n):
         for t in range(i, n):
             if i != t:
                 collide(balls[i], balls[t])

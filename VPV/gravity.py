@@ -8,13 +8,14 @@ import numpy
 import matplotlib.pyplot as plt
 
 pygame.init()
-WIN_width = 640
+WIN_width = 200
 WIN_height = 800
 screen = pygame.display.set_mode((WIN_width, WIN_height),)  # try out larger values and see what happens !
 background = pygame.Surface(screen.get_size())
 background_color = (200, 90, 100)
 background.fill(background_color)
 screen.blit(background, (0, 0))
+max_h = 0
 
 
 class Vector:
@@ -64,9 +65,9 @@ class Vector:
 
 class Ball:
     def __init__(self):
-        self.x = random.randint(40, 500)
-        self.y = random.randint(40, 400)
-        self.radius = 7
+        self.x = random.randint(50, WIN_width - 50)
+        self.y = 800 - random.expovariate(1/400)
+        self.radius = 2
         self.color = (255, 255, 255)
         self.vx = random.randint(-3, 3)
         self.vy = -1
@@ -77,7 +78,7 @@ class Ball:
         elif self.y + self.radius >= WIN_height:
             self.vy *= -1
         out_of_range(self)
-        ax, ay = 0, 9.81
+        ax, ay = 0, 5
         dt = 0.05
         delta_x = self.vx * dt + ax * (dt ** 2) / 2
         delta_y = self.vy * dt + ay * (dt ** 2) / 2
@@ -144,6 +145,26 @@ def collide(ball_1, ball_2):
         ball_2.vx = v_line_2 * line.x + v_normal_2 * normal.x
         ball_2.vy = v_line_2 * line.y + v_normal_2 * normal.y
 
+
+def plt_const(x, y):
+    """
+    Функция рассчитывает по МНК коэффициенты прямой по полученным координатам точек. Так же рассчитывает их погрешности.
+    :param x: Массив абсцисс точек
+    :param y: Массив оридинат точек
+    :return: [значение углового коэфф a, значение коэфф b, значение погрешности a, значение погрешности b]
+    """
+    av_x = numpy.sum(x)/len(x)
+    av_y = numpy.sum(y)/len(y)
+    sigmas_x = numpy.sum(x*x)/len(x) - (numpy.sum(x)/len(x))**2
+    sigmas_y = numpy.sum(y*y)/len(y) - (numpy.sum(y)/len(y))**2
+    r = numpy.sum(x*y)/len(x) - av_x*av_y
+    a = r/sigmas_x
+    b = av_y - a*av_x
+    d_a = 2 * math.sqrt((sigmas_y / sigmas_x - a ** 2) / (len(x) - 2))
+    d_b = d_a * math.sqrt(sigmas_x + av_x ** 2)
+    return [a, b, d_a, d_b]
+
+
 Y_scale = []
 X_scale = []
 X = 0
@@ -158,14 +179,14 @@ k = 0
 
 
 def vpv_starter():
-    global X, n, X_scale, Y_scale, sum_y, sum_v, k
+    global X, n, X_scale, Y_scale, sum_y, sum_v, k, max_h
     for i in range(0, n):
         balls.append(Ball())
     running = True
     while running:
         h_sc = []
         h = []
-        clock.tick(60)
+        clock.tick(240)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -175,10 +196,26 @@ def vpv_starter():
                     plt.grid(True)
                     plt.show()
                     y = []
-                    for i in range(10, 800, 10):
-                        y.append(Y_scale[i//10] - Y_scale[i//10 - 1])
-                    x = X_scale[:-1]
+                    x = []
+                    for i in range(10, max_h, 10):
+                        if Y_scale[i//10] - Y_scale[i//10 - 1] != 0:
+                            y.append(Y_scale[i//10] - Y_scale[i//10 - 1])
+                            x.append(i)
                     plt.plot(x, y, 'o')
+                    plt.grid(True)
+                    plt.show()
+                    x = numpy.array(x)
+                    y = numpy.array(y)
+                    x = numpy.log(x)
+                    y = numpy.log(y)
+                    r = plt_const(x, y)
+                    a = r[0]
+                    b = r[1]
+                    x_ = []
+                    x_.append([min(x), max(x)])
+                    print(a)
+                    print(b)
+                    plt.plot(x, y, 'ro', x, a * x + b, 'g')
                     plt.grid(True)
                     plt.show()
 
@@ -187,17 +224,18 @@ def vpv_starter():
         for ball in balls:
             ball.go()
             sum_v += math.sqrt(ball.vx ** 2 + ball.vy ** 2)
-            h.append(WIN_height-ball.y)  #TODO: сделать апроксимацию экспонентой
+            h.append(WIN_height-ball.y)  #TODO: Подумать вынести в отдельную функцию
             sum_y += WIN_height-ball.y
             if ball.x > WIN_width or ball.x < -20 or ball.y > WIN_height:
                 k += 1
-        for i in range(0, 800, 10):  #TODO: убрать нулевые элементы
+            max_h = int(max(h)//10 * 10)
+        for i in range(0, max_h, 10):
             h = numpy.array(h)
             number = len(h[h <= i])
             h_sc.append(number)
         pygame.display.flip()
         Y_scale = h_sc
-        X_scale = range(0, 800, 10)
+        X_scale = range(0, max_h, 10)
         sum_y = 0
         sum_v = 0
         k = 0
@@ -224,7 +262,7 @@ def plot_starter():
 
 
 thread1 = Thread(target=vpv_starter)
-#thread2 = Thread(target=plot_starter)
+thread2 = Thread(target=plot_starter)
 
 thread1.start()
 #thread2.start()
