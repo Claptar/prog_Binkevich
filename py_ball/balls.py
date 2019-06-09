@@ -1,11 +1,16 @@
 import pygame
 import random
 import math
+import pylab
+from threading import Thread
+from matplotlib import mlab
+import numpy
+import matplotlib.pyplot as plt
 
 pygame.init()
 WIN_width = 640
 WIN_height = 480
-screen = pygame.display.set_mode((800, WIN_height),) # try out larger values and see what happens !
+screen = pygame.display.set_mode((WIN_width, WIN_height),) # try out larger values and see what happens !
 background = pygame.Surface(screen.get_size())
 background_color = (200, 90, 100)
 background.fill(background_color)
@@ -60,18 +65,18 @@ class Vector:
 class Ball:
     def __init__(self, x, y):
         self.x = x
+        self.x0 = x
+        self.y0 = y
         self.y = y
         self.radius = 5
-        self.color = (random.randint(0, 255),
-                      random.randint(0, 255),
-                      random.randint(0, 255))
-        self.vx = random.randint(-2, 2)
-        self.vy = random.randint(-2, 2)
+        self.color = (255, 255, 255)
+        self.vx = random.randint(-400, 400)/100
+        self.vy = random.randint(-400, 400)/100
 
     def go(self):
-        if self.x + self.radius >= 640 or self.x + self.radius <= 50:
+        if self.x + self.radius >= WIN_width or self.x - self.radius <= 0:
             self.vx *= -1
-        elif self.y + self.radius >= 480 or self.y + self.radius <= 50:
+        elif self.y + self.radius >= WIN_height or self.y - self.radius <= 0:
             self.vy *= -1
         out_of_range(self)
         pygame.draw.circle(screen, background_color, (int(self.x), int(self.y)), self.radius)
@@ -131,27 +136,132 @@ def collide(ball_1, ball_2):
         ball_2.vy = v_line_2 * line.y + v_normal_2 * normal.y
 
 
-
-clock = pygame.time.Clock()
-k = 16
-m = 13
-n = (k-1)*(m-1)
-balls = []
-for j in range(1, k):
-    for i in range(1, m):
-        balls.append(Ball(20 + 40*i, 20 + 40*j))
-running = True
-print(len(balls))
-while running:
-    clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.fill(background_color)
+def x_y_scale():
+    global balls
+    v = []
+    num = []
+    i = 0
     for ball in balls:
-        ball.go()
-    for i in range(0, n):
-        for t in range(i, n):
-            if i != t:
-                collide(balls[i], balls[t])
-    pygame.display.flip()
+        v.append(math.sqrt(ball.vx**2 + ball.vy**2)*100)
+    max_v = int(max(v) // 10 * 10)
+    v = numpy.array(v)
+    x = []
+    print(v, '= v ')
+    for i in range(0, max_v, 1):
+        i += 1
+        number = len(v[v <= i]) / len(v)
+        num.append(number)
+        x.append(i)
+    return [x, num, max_v]
+
+
+def plt_const(x, y):
+    """
+    Функция рассчитывает по МНК коэффициенты прямой по полученным координатам точек. Так же рассчитывает их погрешности.
+    :param x: Массив абсцисс точек
+    :param y: Массив оридинат точек
+    :return: [значение углового коэфф a, значение коэфф b, значение погрешности a, значение погрешности b]
+    """
+    x = numpy.array(x)
+    y = numpy.array(y)
+    av_x = numpy.sum(x)/len(x)
+    av_y = numpy.sum(y)/len(y)
+    sigmas_x = numpy.sum(x*x)/len(x) - (numpy.sum(x)/len(x))**2
+    sigmas_y = numpy.sum(y*y)/len(y) - (numpy.sum(y)/len(y))**2
+    r = numpy.sum(x*y)/len(x) - av_x*av_y
+    a = r/sigmas_x
+    b = av_y - a*av_x
+    return [a, b]
+
+balls = []
+
+
+def lab_start():
+    global balls
+    clock = pygame.time.Clock()
+    k = 18
+    m = 15
+    n = (k-1)*(m-1)
+    for j in range(1, k):
+        for i in range(1, m):
+            balls.append(Ball(20 + 40*i, 20 + 40*j))
+    running = True
+    print(len(balls))
+    while running:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x = x_y_scale()[0]
+                y = x_y_scale()[1]
+                max_v = x_y_scale()[2]
+                plt.plot(x, y, 'o')
+                plt.grid(True)
+                plt.show()
+                y1 = []
+                x1 = []
+                for i in range(1, max_v, 1):
+                    if y[i // 10] - y[i // 10 - 1] != 0 and y[i // 10] - y[i // 10 - 1] != 0.0:
+                        y1.append(y[i] - y[i - 1])
+                        x1.append(i)
+                print(y1)
+                print(len(y), 'len', len(y1), max_v)
+                plt.plot(x1, y1, 'o')
+                plt.grid(True)
+                plt.show()
+                x1 = numpy.array(x1)
+                y1 = numpy.array(y1)
+                x1 = numpy.log(x1)
+                y1 = numpy.log(y1)
+                r = plt_const(x1, y1)
+                a = r[0]
+                b = r[1]
+                plt.plot(x1, y1, 'o', x1, a * x1 + b)
+                plt.grid(True)
+                plt.show()
+
+        screen.fill(background_color)
+        for ball in balls:
+            ball.go()
+        for i in range(0, n):
+            for t in range(i, n):
+                if i != t:
+                    collide(balls[i], balls[t])
+        pygame.display.flip()
+
+
+V = []
+R = []
+
+def plot_starter():
+    global V, balls, R
+    t = 0
+    time = []
+    balls[1].color = (255, 0, 0)
+    while thread1.is_alive():
+        t += 1
+        V.append(math.sqrt(balls[1].vx**2 + balls[1].vy**2)*10)
+        r = (balls[1].x0 - balls[1].x)**2 + (balls[1].y0 - balls[1].y)**2
+        R1 = R
+        R1.append(r)
+        R1 = numpy.array(R1)
+        av_r = numpy.average(R1)
+        R = R[:-1]
+        R.append(av_r)
+        time.append(t)
+        pylab.clf()
+        print(time)
+        r = plt_const(time, R)
+        a = r[0]
+        b = r[1]
+        plt.plot(time, R, 'o', time, a * numpy.array(time) + b)
+        pylab.grid(True)
+        pylab.draw()
+        pylab.pause(1)
+        print(t)
+
+
+thread1 = Thread(target=lab_start)
+thread2 = Thread(target=plot_starter)
+
+thread1.start()
+thread2.start()
