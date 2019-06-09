@@ -193,8 +193,24 @@ def vpv_starter():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     plt.plot(X_scale, Y_scale, 'o')
+                    s1 = []
+                    d1 = []
+                    max_H = int(max(H) // 10 * 10)
+                    for i in range(0, max_H, 10):
+                        H_ = numpy.array(H)
+                        number = len(H_[H_ <= i])/len(H_)
+                        s1.append(number)
+                        d1.append(i)
+                    plt.plot(s1, d1, 'o')
                     plt.grid(True)
                     plt.show()
+                    s2 = []
+                    d2 = []
+                    for i in range(10, max_H, 10):
+                        if s1[i // 10] - s1[i // 10 - 1] != 0:
+                            s2.append(s1[i // 10] - s1[i // 10 - 1])
+                            d2.append(i)
+                    plt.plot(d2, s2, 'o')
                     y = []
                     x = []
                     for i in range(10, max_h, 10):
@@ -217,6 +233,14 @@ def vpv_starter():
                     print(b)
                     plt.plot(x, y, 'ro', x, a * x + b, 'g')
                     plt.grid(True)
+                    d3 = numpy.array(d2)
+                    s3 = numpy.array(s2)
+                    d3 = numpy.log(d3)
+                    s3 = numpy.log(s3)
+                    r = plt_const(d3, s3)
+                    a3 = r[0]
+                    b3 = r[1]
+                    plt.plot(d3, s3, 'ro', d3, a3 * d3 + b3, 'g')
                     plt.show()
 
 
@@ -231,7 +255,7 @@ def vpv_starter():
             max_h = int(max(h)//10 * 10)
         for i in range(0, max_h, 10):
             h = numpy.array(h)
-            number = len(h[h <= i])
+            number = len(h[h <= i])/len(h)
             h_sc.append(number)
         pygame.display.flip()
         Y_scale = h_sc
@@ -249,14 +273,52 @@ def vpv_starter():
         sum_v = 0
 
 
+H = []
+
+
 def plot_starter():
-    global X_scale, Y_scale
+    global X_scale, Y_scale, V, R, H
+    t = 0
+    time = []
     while thread1.is_alive():
         try:
-            pylab.clf()
-            pylab.plot(X_scale, Y_scale, 'o')
-            pylab.draw()
+            t += 1
+            H.append(WIN_height - balls[1].y)
+            time.append(t)
+            for event in pygame.event.get():
+                if event.type == pygame.K_0:
+                    s1 = []
+                    d1 = []
+                    max_H = int(max(H) // 10 * 10)
+                    for i in range(0, max_H, 10):
+                        H_ = numpy.array(H)
+                        number = len(H_[H_ <= i])
+                        s1.append(number)
+                        d1.append(i)
+                    plt.plot(s1, d1, 'o')
+                    plt.grid(True)
+                    plt.show()
+                    s2 = []
+                    d2 = []
+                    for i in range(10, max_H, 10):
+                        if s1[i // 10] - s1[i // 10 - 1] != 0:
+                            s2.append(s1[i // 10] - s1[i // 10 - 1])
+                            d2.append(i)
+                    plt.plot(d2, s2, 'o')
+                    plt.grid(True)
+                    plt.show()
+                    d3 = numpy.array(d2)
+                    s3 = numpy.array(s2)
+                    d3 = numpy.log(d3)
+                    s3 = numpy.log(s3)
+                    r = plt_const(d3, s3)
+                    a3 = r[0]
+                    b3 = r[1]
+                    plt.plot(d3, s3, 'ro', d3, a3 * d3 + b3, 'g')
+                    plt.grid(True)
+                    plt.show()
             pylab.pause(1)
+            print(t)
         except Exception as e:
             print(e)
 
@@ -265,5 +327,5 @@ thread1 = Thread(target=vpv_starter)
 thread2 = Thread(target=plot_starter)
 
 thread1.start()
-#thread2.start()
+thread2.start()
 
