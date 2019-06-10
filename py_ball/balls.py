@@ -147,7 +147,7 @@ def x_y_scale():
     max_v = int(max(v) // 10 * 10)
     v = numpy.array(v)
     x = []
-    for i in range(0, max_v, 10):
+    for i in range(0, max_v, 20):
         i += 1
         number = len(v[v <= i])
         num.append(number)
@@ -162,7 +162,7 @@ def s_d_scale():
     max_v = int(max(V) // 10 * 10)
     v = numpy.array(V)
     x = []
-    for i in range(0, max_v, 10):
+    for i in range(0, max_v, 20):
         i += 1
         number = len(v[v <= i])
         num.append(number)
