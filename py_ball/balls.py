@@ -7,6 +7,7 @@ from matplotlib import mlab
 import numpy
 import matplotlib.pyplot as plt
 
+IS_ALIVE = True
 pygame.init()
 WIN_width = 640
 WIN_height = 480
@@ -146,10 +147,24 @@ def x_y_scale():
     max_v = int(max(v) // 10 * 10)
     v = numpy.array(v)
     x = []
-    print(v, '= v ')
-    for i in range(0, max_v, 1):
+    for i in range(0, max_v, 10):
         i += 1
-        number = len(v[v <= i]) / len(v)
+        number = len(v[v <= i])
+        num.append(number)
+        x.append(i)
+    return [x, num, max_v]
+
+
+def s_d_scale():
+    global balls, V
+    num = []
+    i = 0
+    max_v = int(max(V) // 10 * 10)
+    v = numpy.array(V)
+    x = []
+    for i in range(0, max_v, 10):
+        i += 1
+        number = len(v[v <= i])
         num.append(number)
         x.append(i)
     return [x, num, max_v]
@@ -177,47 +192,69 @@ balls = []
 
 
 def lab_start():
-    global balls
+    global balls, IS_ALIVE
     clock = pygame.time.Clock()
     k = 18
     m = 15
     n = (k-1)*(m-1)
     for j in range(1, k):
         for i in range(1, m):
-            balls.append(Ball(20 + 40*i, 20 + 40*j))
+            if len(balls) == 1:
+                balls.append(Ball(WIN_width/2, WIN_height/2))
+            else:
+                balls.append(Ball(20 + 40*i, 20 + 40*j))
     running = True
-    print(len(balls))
     while running:
         clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
+                IS_ALIVE = False
                 x = x_y_scale()[0]
                 y = x_y_scale()[1]
-                max_v = x_y_scale()[2]
-                plt.plot(x, y, 'o')
+                plt.plot(x, y, 'o', label='Гиббс')
+                s = x_y_scale()[0]
+                d = x_y_scale()[1]
+                plt.plot(s, d, 'o', label='Больцман')
                 plt.grid(True)
+                plt.legend()
                 plt.show()
                 y1 = []
                 x1 = []
-                for i in range(1, max_v, 1):
-                    if y[i // 10] - y[i // 10 - 1] != 0 and y[i // 10] - y[i // 10 - 1] != 0.0:
+                for i in range(1, len(y)):
+                    if y[i] - y[i - 1] != 0 and y[i] - y[i - 1] != 0.0:
                         y1.append(y[i] - y[i - 1])
                         x1.append(i)
-                print(y1)
-                print(len(y), 'len', len(y1), max_v)
-                plt.plot(x1, y1, 'o')
+                plt.plot(x1, y1, 'o', label='Гиббс')
+                d1 = []
+                s1 = []
+                for i in range(1, len(d)):
+                    if d[i] - d[i - 1] != 0 and d[i] - d[i - 1] != 0.0:
+                        d1.append(d[i] - d[i - 1])
+                        s1.append(i)
+                plt.plot(s1, d1, 'o', label='Гиббс')
                 plt.grid(True)
+                plt.legend()
                 plt.show()
                 x1 = numpy.array(x1)
                 y1 = numpy.array(y1)
-                x1 = numpy.log(x1)
-                y1 = numpy.log(y1)
+                y1 = numpy.log(y1/x1)
+                x1 = numpy.log(x1*x1)
                 r = plt_const(x1, y1)
                 a = r[0]
                 b = r[1]
-                plt.plot(x1, y1, 'o', x1, a * x1 + b)
+                plt.plot(x1, y1, 'o', x1, a * x1 + b, label='Гиббс')
+                s1 = numpy.array(s1)
+                d1 = numpy.array(d1)
+                d1 = numpy.log(d1 / s1)
+                s1 = numpy.log(s1 * s1)
+                r = plt_const(s1, d1)
+                a1 = r[0]
+                b1 = r[1]
+                plt.plot(s1, d1, 'o', s1, a1 * s1 + b1, label='Гиббс')
                 plt.grid(True)
+                plt.legend()
                 plt.show()
+                IS_ALIVE = True
 
         screen.fill(background_color)
         for ball in balls:
@@ -226,11 +263,14 @@ def lab_start():
             for t in range(i, n):
                 if i != t:
                     collide(balls[i], balls[t])
+
         pygame.display.flip()
 
 
 V = []
 R = []
+R2 = []
+
 
 def plot_starter():
     global V, balls, R
@@ -238,26 +278,12 @@ def plot_starter():
     time = []
     balls[1].color = (255, 0, 0)
     while thread1.is_alive():
-        t += 1
-        V.append(math.sqrt(balls[1].vx**2 + balls[1].vy**2)*10)
-        r = (balls[1].x0 - balls[1].x)**2 + (balls[1].y0 - balls[1].y)**2
-        R1 = R
-        R1.append(r)
-        R1 = numpy.array(R1)
-        av_r = numpy.average(R1)
-        R = R[:-1]
-        R.append(av_r)
-        time.append(t)
-        pylab.clf()
-        print(time)
-        r = plt_const(time, R)
-        a = r[0]
-        b = r[1]
-        plt.plot(time, R, 'o', time, a * numpy.array(time) + b)
-        pylab.grid(True)
-        pylab.draw()
-        pylab.pause(1)
-        print(t)
+        if IS_ALIVE:
+            t += 1
+            print(t)
+            V.append(math.sqrt(balls[1].vx**2 + balls[1].vy**2))
+
+            pylab.pause(1)
 
 
 thread1 = Thread(target=lab_start)
@@ -265,3 +291,19 @@ thread2 = Thread(target=plot_starter)
 
 thread1.start()
 thread2.start()
+
+"""
+r = (balls[1].x0 - balls[1].x)**2 + (balls[1].y0 - balls[1].y)**2
+            R2.append(r)
+            R_np = numpy.array(R2)
+            av_r = numpy.average(R2)
+            R.append(av_r)
+            time.append(t)
+            pylab.clf()
+            r = plt_const(time, R)
+            a = r[0]
+            b = r[1]
+            plt.plot(time, R, 'o', time, a * numpy.array(time) + b)
+            pylab.grid(True)
+            pylab.draw()
+"""

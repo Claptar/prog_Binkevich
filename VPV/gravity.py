@@ -6,7 +6,7 @@ from threading import Thread
 from matplotlib import mlab
 import numpy
 import matplotlib.pyplot as plt
-
+IS_STOPPED = False
 pygame.init()
 WIN_width = 200
 WIN_height = 800
@@ -146,6 +146,24 @@ def collide(ball_1, ball_2):
         ball_2.vy = v_line_2 * line.y + v_normal_2 * normal.y
 
 
+def x_y_scale():
+    global balls
+    v = []
+    num = []
+    i = 0
+    for ball in balls:
+        v.append(math.sqrt(ball.vx**2 + ball.vy**2)*100)
+    max_v = int(max(v) // 10 * 10)
+    v = numpy.array(v)
+    x = []
+    for i in range(0, max_v, 10):
+        i += 1
+        number = len(v[v <= i])
+        num.append(number)
+        x.append(i)
+    return [x, num, max_v]
+
+
 def plt_const(x, y):
     """
     Функция рассчитывает по МНК коэффициенты прямой по полученным координатам точек. Так же рассчитывает их погрешности.
@@ -179,7 +197,7 @@ k = 0
 
 
 def vpv_starter():
-    global X, n, X_scale, Y_scale, sum_y, sum_v, k, max_h
+    global X, n, X_scale, Y_scale, sum_y, sum_v, k, max_h, IS_STOPPED
     for i in range(0, n):
         balls.append(Ball())
     running = True
@@ -188,11 +206,39 @@ def vpv_starter():
         h = []
         clock.tick(240)
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                IS_STOPPED = True
+                x = x_y_scale()[0]
+                y = x_y_scale()[1]
+                plt.plot(x, y, 'o')
+                plt.grid(True)
+                plt.show()
+                y1 = []
+                x1 = []
+                for i in range(1, len(y)):
+                    if y[i] - y[i - 1] != 0 and y[i] - y[i - 1] != 0.0:
+                        y1.append(y[i] - y[i - 1])
+                        x1.append(i)
+                plt.plot(x1, y1, 'o')
+                plt.grid(True)
+                plt.show()
+                x1 = numpy.array(x1)
+                y1 = numpy.array(y1)
+                x1 = numpy.log(x1)
+                y1 = numpy.log(y1)
+                r = plt_const(x1, y1)
+                a = r[0]
+                b = r[1]
+                plt.plot(x1, y1, 'o', x1, a * x1 + b)
+                plt.grid(True)
+                plt.show()
+                IS_STOPPED = False
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    plt.plot(X_scale, Y_scale, 'o')
+                    IS_STOPPED = True
+                    plt.plot(X_scale, Y_scale, 'o', label='Гиббс')
                     s1 = []
                     d1 = []
                     max_H = int(max(H) // 10 * 10)
@@ -201,8 +247,9 @@ def vpv_starter():
                         number = len(H_[H_ <= i])/len(H_)
                         s1.append(number)
                         d1.append(i)
-                    plt.plot(s1, d1, 'o')
+                    plt.plot(s1, d1, 'o', label='Больцман')
                     plt.grid(True)
+                    plt.legend()
                     plt.show()
                     s2 = []
                     d2 = []
@@ -210,15 +257,16 @@ def vpv_starter():
                         if s1[i // 10] - s1[i // 10 - 1] != 0:
                             s2.append(s1[i // 10] - s1[i // 10 - 1])
                             d2.append(i)
-                    plt.plot(d2, s2, 'o')
+                    plt.plot(d2, s2, 'o', label='Больцман')
                     y = []
                     x = []
                     for i in range(10, max_h, 10):
                         if Y_scale[i//10] - Y_scale[i//10 - 1] != 0:
                             y.append(Y_scale[i//10] - Y_scale[i//10 - 1])
                             x.append(i)
-                    plt.plot(x, y, 'o')
+                    plt.plot(x, y, 'o', label='Гиббс')
                     plt.grid(True)
+                    plt.legend()
                     plt.show()
                     x = numpy.array(x)
                     y = numpy.array(y)
@@ -227,7 +275,7 @@ def vpv_starter():
                     r = plt_const(x, y)
                     a = r[0]
                     b = r[1]
-                    plt.plot(x, y, 'o', x, a * x + b)
+                    plt.plot(x, y, 'o', x, a * x + b, label='Гиббс')
                     plt.grid(True)
                     d3 = numpy.array(d2)
                     s3 = numpy.array(s2)
@@ -236,8 +284,11 @@ def vpv_starter():
                     r = plt_const(d3, s3)
                     a3 = r[0]
                     b3 = r[1]
-                    plt.plot(d3, s3, 'o', d3, a3 * d3 + b3)
+                    plt.plot(d3, s3, 'o', d3, a3 * d3 + b3, label='Больцман')
+                    plt.legend()
                     plt.show()
+                    IS_STOPPED = False
+
 
 
         screen.fill(background_color)
@@ -277,14 +328,15 @@ def plot_starter():
     t = 0
     time = []
     while thread1.is_alive():
-        try:
-            t += 1
-            H.append(WIN_height - balls[1].y)
-            time.append(t)
-            pylab.pause(1)
-            print(t)
-        except Exception as e:
-            print(e)
+        if not IS_STOPPED:
+            try:
+                t += 1
+                H.append(WIN_height - balls[1].y)
+                time.append(t)
+                pylab.pause(1)
+                print(t)
+            except Exception as e:
+                print(e)
 
 
 thread1 = Thread(target=vpv_starter)
