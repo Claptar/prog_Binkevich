@@ -9,6 +9,7 @@ from matplotlib import mlab
 import numpy
 import matplotlib.pyplot as plt
 import math
+import pickle
 
 WIN_width = 500
 WIN_height = 800
@@ -41,7 +42,7 @@ def add_balls(space, balls):
                 balls.append(ball_shape)
 
             else:
-                ball_shape = add_ball(space, random.randint(20, WIN_width - 50), 800 - random.expovariate(1/400))
+                ball_shape = add_ball(space, random.randint(20, WIN_width - 50), random.expovariate(1/400) + 50)
                 balls.append(ball_shape)
 
 
@@ -54,10 +55,10 @@ def add_static_L(space):
     body2.position = (WIN_width, WIN_height / 2)
     body3.position = (WIN_width / 2, 0)
     body4.position = (WIN_width / 2, 3000)
-    l1 = pymunk.Segment(body3, (-WIN_width / 2, 0), (WIN_width / 2, 0), 5)  # 2
-    l2 = pymunk.Segment(body1, (0, -3000), (0, 3000), 5)
-    l3 = pymunk.Segment(body2, (0, -3000), (0, 3000), 5)
-    l4 = pymunk.Segment(body4, (-WIN_width / 2, 0), (WIN_width / 2, 0), 5)
+    l1 = pymunk.Segment(body3, (-WIN_width / 2, -200), (WIN_width / 2, -200), 200)  # 2
+    l2 = pymunk.Segment(body1, (-200, -3000), (-200, 3000), 200)
+    l3 = pymunk.Segment(body2, (200, -3000), (200, 3000), 200)
+    l4 = pymunk.Segment(body4, (-WIN_width / 2, 200), (WIN_width / 2, 200), 200)
     l1.elasticity = 1.0
     l2.elasticity = 1.0
     l3.elasticity = 1.0
@@ -138,6 +139,12 @@ def main():
                 sys.exit(0)
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 sys.exit(0)
+            elif event.type == KEYDOWN and event.key == K_s:
+                with open("copy_and_pickle.pickle_g", "wb") as f:
+                    pickle.dump(space, f)
+            elif event.type == KEYDOWN and event.key == K_l:
+                with open("copy_and_pickle.pickle_g", "rb") as f:
+                    space = pickle.load(f)
             if event.type == KEYDOWN and event.key == K_b:
                 IS_ALIVE = False
                 x = x_y_scale(balls)[0]

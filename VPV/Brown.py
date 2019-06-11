@@ -5,12 +5,10 @@ import pymunk
 import pymunk.pygame_util
 import pylab
 from threading import Thread
+from matplotlib import mlab
 import numpy
 import matplotlib.pyplot as plt
 import math
-import time
-import pickle
-
 WIN_width = 640
 WIN_height = 480
 IS_ALIVE = True
@@ -24,7 +22,7 @@ def add_ball(space, x, y):
     """Add a ball to the given space at a random position"""
     mass = 1
     radius = 2
-    inertia = pymunk.moment_for_circle(mass, 0, radius, (0,0))
+    inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
     body = pymunk.Body(mass, inertia)
     body.position = x, y
     shape = pymunk.Circle(body, radius, (0, 0))
@@ -44,35 +42,35 @@ def add_balls(space, balls):
                 balls.append(ball_shape)
                 vx = random.randint(-200, 200)
                 vy = random.randint(-200, 200)
-                balls[len(balls) -1].body._set_velocity((vx, vy))
+                balls[len(balls) - 1].body._set_velocity((vx, vy))
 
             else:
-                ball_shape = add_ball(space, 20 + 10 * i, 20 + 10 * j)
+                ball_shape = add_ball(space, 20 + 12 * i, 20 + 12 * j)
                 balls.append(ball_shape)
                 vx = random.randint(-200, 200)
                 vy = random.randint(-200, 200)
-                balls[len(balls) -1].body._set_velocity((vx, vy))
-        
-        
+                balls[len(balls) - 1].body._set_velocity((vx, vy))
+
+
 def add_static_L(space):
-    body1 = pymunk.Body(body_type = pymunk.Body.STATIC) # 1
+    body1 = pymunk.Body(body_type=pymunk.Body.STATIC)  # 1
     body2 = pymunk.Body(body_type=pymunk.Body.STATIC)  # 1
-    body3 = pymunk.Body(body_type=pymunk.Body.STATIC) # 1
+    body3 = pymunk.Body(body_type=pymunk.Body.STATIC)  # 1
     body4 = pymunk.Body(body_type=pymunk.Body.STATIC)
-    body1.position = (0, WIN_height/2)
-    body2.position = (WIN_width, WIN_height/2)
-    body3.position = (WIN_width/2, 0)
+    body1.position = (0, WIN_height / 2)
+    body2.position = (WIN_width, WIN_height / 2)
+    body3.position = (WIN_width / 2, 0)
     body4.position = (WIN_width / 2, WIN_height)
-    l1 = pymunk.Segment(body3, (-WIN_width/2, -200), (WIN_width/2, -200), 200) # 2
-    l2 = pymunk.Segment(body1, (-200, -WIN_height/2), (-200, 2000), 200)
-    l3 = pymunk.Segment(body2, (200, -WIN_width/2), (200, 2000), 200)
+    l1 = pymunk.Segment(body3, (-WIN_width / 2, -200), (WIN_width / 2, -200), 200)  # 2
+    l2 = pymunk.Segment(body1, (-200, -WIN_height / 2), (-200, 2000), 200)
+    l3 = pymunk.Segment(body2, (200, -WIN_width / 2), (200, 2000), 200)
     l4 = pymunk.Segment(body4, (-WIN_width / 2, 200), (WIN_width / 2, 200), 200)
     l1.elasticity = 1.0
     l2.elasticity = 1.0
     l3.elasticity = 1.0
     l4.elasticity = 1.0
 
-    space.add(l1, l2, l3, l4) # 3
+    space.add(l1, l2, l3, l4)  # 3
     return l1, l2, l3, l4
 
 
@@ -82,12 +80,12 @@ def x_y_scale(balls):
     for ball in balls:
         vx = ball.body._get_velocity()[0]
         vy = ball.body._get_velocity()[1]
-        v.append(math.sqrt(vx**2 + vy**2))
+        v.append(math.sqrt(vx ** 2 + vy ** 2))
     max_v = int(max(v) // 10 * 10)
     v = numpy.array(v)
     x = []
     for i in range(0, 350, 10):
-        number = len(v[v <= i])/1600
+        number = len(v[v <= i]) / 1600
         num.append(number)
         x.append(i)
     return [x, num, max_v]
@@ -100,7 +98,7 @@ def s_d_scale():
     v = numpy.array(V)
     x = []
     for i in range(0, 350, 10):
-        number = len(v[v <= i])/len(V)
+        number = len(v[v <= i]) / len(V)
         num.append(number)
         x.append(i)
     return [x, num, max_v]
@@ -115,13 +113,13 @@ def plt_const(x, y):
     """
     x = numpy.array(x)
     y = numpy.array(y)
-    av_x = numpy.sum(x)/len(x)
-    av_y = numpy.sum(y)/len(y)
-    sigmas_x = numpy.sum(x*x)/len(x) - (numpy.sum(x)/len(x))**2
-    sigmas_y = numpy.sum(y*y)/len(y) - (numpy.sum(y)/len(y))**2
-    r = numpy.sum(x*y)/len(x) - av_x*av_y
-    a = r/sigmas_x
-    b = av_y - a*av_x
+    av_x = numpy.sum(x) / len(x)
+    av_y = numpy.sum(y) / len(y)
+    sigmas_x = numpy.sum(x * x) / len(x) - (numpy.sum(x) / len(x)) ** 2
+    sigmas_y = numpy.sum(y * y) / len(y) - (numpy.sum(y) / len(y)) ** 2
+    r = numpy.sum(x * y) / len(x) - av_x * av_y
+    a = r / sigmas_x
+    b = av_y - a * av_x
     return [a, b]
 
 
@@ -135,7 +133,7 @@ def main():
     space = pymunk.Space()
 
     lines = add_static_L(space)
-    n = 15*18
+    n = 15 * 18
     balls = []
     draw_options = pymunk.pygame_util.DrawOptions(screen)
     add_balls(space, balls)
@@ -143,18 +141,9 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 sys.exit(0)
-            elif event.type == KEYDOWN and event.key == K_s:
-                with open("copy_and_pickle.pickle", "wb") as f:
-                    pickle.dump(space, f)
-            elif event.type == KEYDOWN and event.key == K_l:
-                with open("copy_and_pickle.pickle", "rb") as f:
-                    space = pickle.load(f)
-                    shapes = space._get_shapes()
-                    for i in range(0, len(shapes) - 4):
-                        balls[i] = shapes[i + 4]
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 sys.exit(0)
-            elif event.type == KEYDOWN and event.key == K_m:
+            if event.type == KEYDOWN and event.key == K_m:
                 IS_ALIVE = False
                 x = x_y_scale(balls)[0]
                 y = x_y_scale(balls)[1]
@@ -176,9 +165,9 @@ def main():
                     if y[i] - y[i - 1] != 0 and y[i] - y[i - 1] != 0.0:
                         y1.append(y[i] - y[i - 1])
                     else:
-                        del(x1[i - t])
+                        del (x1[i - t])
                         t += 1
-                del(x1[0])
+                del (x1[0])
                 plt.plot(x1, y1, 'o', label='Гиббс')
                 d1 = []
                 s1 = list(s)
@@ -187,17 +176,17 @@ def main():
                     if d[i] - d[i - 1] != 0 and d[i] - d[i - 1] != 0.0:
                         d1.append(d[i] - d[i - 1])
                     else:
-                        del(s1[i - t])
+                        del (s1[i - t])
                         t += 1
-                del(s1[0])
+                del (s1[0])
                 plt.plot(s1, d1, 'o', label='Больцман')
                 plt.grid(True)
                 plt.legend()
                 plt.show()
                 v = numpy.array(x1)
                 ro = numpy.array(y1)
-                y1 = numpy.log(ro/v)
-                x1 = v*v
+                y1 = numpy.log(ro / v)
+                x1 = v * v
                 r = plt_const(x1, y1)
                 a = r[0]
                 b = r[1]
@@ -205,7 +194,7 @@ def main():
                 s1 = numpy.array(s1)
                 d1 = numpy.array(d1)
                 d1 = numpy.log(d1 / s1)
-                s1 = s1*s1
+                s1 = s1 * s1
                 r = plt_const(s1, d1)
                 a1 = r[0]
                 b1 = r[1]
@@ -213,9 +202,8 @@ def main():
                 plt.grid(True)
                 plt.legend()
                 plt.show()
-                print("a = ", a, "b = ", b, "a1 = ", a1, "b1 = ", b1)
                 IS_ALIVE = True
-            elif event.type == KEYDOWN and event.key == K_1:
+            if event.type == KEYDOWN and event.key == K_1:
                 IS_ALIVE = False
                 x = x_y_scale(balls)[0]
                 y = x_y_scale(balls)[1]
@@ -248,9 +236,8 @@ def main():
                 plt.grid(True)
                 plt.legend()
                 plt.show()
-                print("a = ", a, "b = ", b)
                 IS_ALIVE = True
-            elif event.type == KEYDOWN and event.key == K_2:
+            if event.type == KEYDOWN and event.key == K_2:
                 IS_ALIVE = False
                 s = s_d_scale()[0]
                 d = s_d_scale()[1]
@@ -283,29 +270,12 @@ def main():
                 plt.grid(True)
                 plt.legend()
                 plt.show()
-                print("a1 = ", a1, "b1 = ", b1)
                 IS_ALIVE = True
-        space.step(1/50.0)
+        space.step(1 / 50.0)
         screen.fill((255, 255, 255))
         space.debug_draw(draw_options)
 
         pygame.display.flip()
-        p = 0
-        for ball in balls:
-            x, y = ball.body.position
-            vx, vy = ball.body._get_velocity()
-            if ((WIN_width - x) < (vx * 0.05)) or (x < (-vx * 0.05)) or ((WIN_height - y) < (vy * 0.05)) or (y < (-vy * 0.05)):
-                l1 = (WIN_width - x) / (vx * 0.05)
-                l2 = x / (-vx * 0.05)
-                l3 = (WIN_height - y) / (vy * 0.05)
-                l4 = y / (-vy * 0.05)
-                a = sorted([l1, l2, l3, l4])
-                if l1 == a[2] or l2 == a[2]:
-                    p += 2*math.fabs(vx)/(0.05 * WIN_height)
-                elif l3 == a[2] or l4 == a[2]:
-                    p += 2*math.fabs(vy)/(0.05 * WIN_width)
-        print(p)
-        print(time.clock())
         clock.tick(50)
 
 
@@ -314,16 +284,17 @@ def plot_starter():
     t = 0
     while thread1.is_alive():
         if IS_ALIVE:
+            print(t)
             if len(balls) > 2:
                 t += 1
                 vx = balls[1].body._get_velocity()[0]
                 vy = balls[1].body._get_velocity()[1]
                 V.append(math.sqrt(vx ** 2 + vy ** 2))
-            pylab.pause(1/4)
+            pylab.pause(1 / 4)
 
 
 def plot_starter2():
-    global V, balls
+    global balls
     t = 0
     time = []
     x0 = 0
@@ -348,12 +319,14 @@ def plot_starter2():
                 plt.plot(time, R, 'o', time, a * numpy.array(time) + b)
                 pylab.grid(True)
                 pylab.draw()
-            pylab.pause(1/4)
+            pylab.pause(1/2)
 
 
 if __name__ == '__main__':
     thread1 = Thread(target=main)
     thread2 = Thread(target=plot_starter)
+    thread3 = Thread(target=plot_starter2)
 
     thread1.start()
     thread2.start()
+    thread3.start()

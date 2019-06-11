@@ -28,7 +28,7 @@ def add_static_L(space):
     body1.position = (0, 400)
     body2.position = (480, 400)
     body3.position = (240, 0)
-    l1 = pymunk.Segment(body3, (-240, 0), (240, 0), 5) # 2
+    l1 = pymunk.Segment(body3, (-240, 0), (240, 0), 50) # 2
     l2 = pymunk.Segment(body1, (0, -400), (0, 2000), 5)
     l3 = pymunk.Segment(body2, (0, -400), (0, 2000), 5)
     l1.elasticity = 1.0
@@ -46,7 +46,7 @@ def main():
     clock = pygame.time.Clock()
 
     space = pymunk.Space()
-    space.gravity = (0.0, -100.0)
+    space.gravity = (0.0, -1000.0)
 
     lines = add_static_L(space)
     balls = []
