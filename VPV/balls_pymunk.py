@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import math
 import time
 import pickle
+import pandas as pd
+from pandas import ExcelWriter
+from pandas import ExcelFile
+import pandas
 
 WIN_width = 640
 WIN_height = 480
@@ -190,6 +194,18 @@ def main():
                         del(s1[i - t])
                         t += 1
                 del(s1[0])
+                df = pandas.DataFrame({'x1': x1,
+                                       'y1': y1})
+
+                writer = ExcelWriter('rhogb1.xlsx')
+                df.to_excel(writer, 'Sheet1', index=False)
+                writer.save()
+                df = pandas.DataFrame({'s1': s1,
+                                       'd1': d1})
+
+                writer = ExcelWriter('rhogb3.xlsx')
+                df.to_excel(writer, 'Sheet1', index=False)
+                writer.save()
                 plt.plot(s1, d1, 'o', label='Больцман')
                 plt.grid(True)
                 plt.legend()
@@ -209,11 +225,27 @@ def main():
                 r = plt_const(s1, d1)
                 a1 = r[0]
                 b1 = r[1]
+                df = pandas.DataFrame({'x1': x1,
+                                       'y1': y1})
+                writer = ExcelWriter('rhogb2.xlsx')
+
+                df.to_excel(writer, 'Sheet2', index=False)
+                writer.save()
+                df = pandas.DataFrame({'s1': s1,
+                                       'd1': d1})
+
+                writer = ExcelWriter('rhogb4.xlsx')
+                df.to_excel(writer, 'Sheet1', index=False)
+                writer.save()
                 plt.plot(s1, d1, 'o', s1, a1 * s1 + b1, label='Больцман')
+
                 plt.grid(True)
                 plt.legend()
                 plt.show()
+                k = [a, b, a1, b1]
                 print("a = ", a, "b = ", b, "a1 = ", a1, "b1 = ", b1)
+                with open("файл.txt", "w") as file:
+                    print(*k, file=file)
                 IS_ALIVE = True
             elif event.type == KEYDOWN and event.key == K_1:
                 IS_ALIVE = False

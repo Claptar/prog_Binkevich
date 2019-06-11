@@ -10,8 +10,11 @@ import numpy
 import matplotlib.pyplot as plt
 import math
 import pickle
+from pandas import ExcelWriter
+from pandas import ExcelFile
+import pandas
 
-WIN_width = 500
+WIN_width = 400
 WIN_height = 800
 IS_ALIVE = True
 balls = []
@@ -78,8 +81,8 @@ def x_y_scale(balls):
     h = numpy.array(h)
     x = []
     number_piz = 0
-    for i in range(0, max_h, 20):
-        number = len(h[h <= i])
+    for i in range(0, 1300, 20):
+        number = len(h[h <= i])/400
         num.append(number)
         x.append(i)
     print(number_piz, " number_piz")
@@ -92,8 +95,8 @@ def s_d_scale():
     max_h = int(max(H) // 10 * 10)
     h = numpy.array(H)
     x = []
-    for i in range(0, max_h, 20):
-        number = len(h[h <= i])
+    for i in range(0, 1300, 20):
+        number = len(h[h <= i])/len(h)
         num.append(number)
         x.append(i)
     return [x, num, max_h]
@@ -145,6 +148,9 @@ def main():
             elif event.type == KEYDOWN and event.key == K_l:
                 with open("copy_and_pickle.pickle_g", "rb") as f:
                     space = pickle.load(f)
+                    shapes = space._get_shapes()
+                    for i in range(0, len(shapes) - 4):
+                        balls[i] = shapes[i + 4]
             if event.type == KEYDOWN and event.key == K_b:
                 IS_ALIVE = False
                 x = x_y_scale(balls)[0]
@@ -170,6 +176,8 @@ def main():
                         del (x1[i - t])
                         t += 1
                 del (x1[0])
+                print('x1 = ', x1)
+                print('y1 = ', y1)
                 plt.plot(x1, y1, 'o', label='Гиббс')
                 d1 = []
                 s1 = list(s)
@@ -181,6 +189,15 @@ def main():
                         del (s1[i - t])
                         t += 1
                 del (s1[0])
+                print('s1 = ', s1)
+                print('d1 = ', d1)
+                df = pandas.DataFrame({'x1': x1,
+                                       'y1': y1,
+                                       's1': s1,
+                                       'd1': d1})
+
+                writer = ExcelWriter('rhogb.xlsx')
+                df.to_excel(writer, 'Sheet1', index=False)
                 plt.plot(s1, d1, 'o', label='Больцман')
                 plt.grid(True)
                 plt.legend()
@@ -192,6 +209,8 @@ def main():
                 r = plt_const(x1, y1)
                 a = r[0]
                 b = r[1]
+                print('x2 = ', x1)
+                print('y2 = ', y1)
                 plt.plot(x1, y1, 'o', x1, a * x1 + b, label='Гиббс')
                 s1 = numpy.array(s1)
                 d1 = numpy.array(d1)
@@ -200,10 +219,21 @@ def main():
                 r = plt_const(s1, d1)
                 a1 = r[0]
                 b1 = r[1]
+                print('s2 = ', s1)
+                print('d2 = ', d1)
+                df = pandas.DataFrame({'x1': x1,
+                                       'y1': y1,
+                                       's1': s1,
+                                       'd1': d1})
+
+                writer = ExcelWriter('rhogb.xlsx')
+                df.to_excel(writer, 'Sheet2', index=False)
                 plt.plot(s1, d1, 'o', s1, a1 * s1 + b1, label='Больцман')
                 plt.grid(True)
                 plt.legend()
                 plt.show()
+                print("a = ", a, "b = ", b, "a1 = ", a1, "b1 = ", b1)
+                writer.save()
                 IS_ALIVE = True
             if event.type == KEYDOWN and event.key == K_1:
                 IS_ALIVE = False
@@ -223,6 +253,8 @@ def main():
                         del (x1[i - t])
                         t += 1
                 del (x1[0])
+                print('x1 = ', x1)
+                print('y1 = ', y1)
                 plt.plot(x1, y1, 'o', label='Гиббс')
                 plt.grid(True)
                 plt.legend()
@@ -234,10 +266,13 @@ def main():
                 r = plt_const(x1, y1)
                 a = r[0]
                 b = r[1]
+                print('x2 = ', x1)
+                print('y2 = ', y1)
                 plt.plot(x1, y1, 'o', x1, a * x1 + b, label='Гиббс')
                 plt.grid(True)
                 plt.legend()
                 plt.show()
+                print("a = ", a, "b = ", b)
                 IS_ALIVE = True
             if event.type == KEYDOWN and event.key == K_2:
                 IS_ALIVE = False
@@ -257,6 +292,8 @@ def main():
                         del (s1[i - t])
                         t += 1
                 del (s1[0])
+                print('s1 = ', s1)
+                print('d1 = ', d1)
                 plt.plot(s1, d1, 'o', label='Больцман')
                 plt.grid(True)
                 plt.legend()
@@ -268,11 +305,14 @@ def main():
                 r = plt_const(s1, d1)
                 a1 = r[0]
                 b1 = r[1]
+                print('s2 = ', s1)
+                print('d2 = ', d1)
                 plt.plot(s1, d1, 'o', s1, a1 * s1 + b1, label='Больцман')
                 plt.grid(True)
                 plt.legend()
                 plt.show()
                 IS_ALIVE = True
+                print("a1 = ", a1, "b1 = ", b1)
         for i in range(0, len(balls)):
             y1 = balls[i].body.position[1]
             x1 = balls[i].body.position[0]
