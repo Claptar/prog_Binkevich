@@ -192,12 +192,17 @@ def main():
                 print('s1 = ', s1)
                 print('d1 = ', d1)
                 df = pandas.DataFrame({'x1': x1,
-                                       'y1': y1,
-                                       's1': s1,
+                                       'y1': y1 })
+
+                writer = ExcelWriter('bol1.xlsx')
+                df.to_excel(writer, 'Sheet1', index=False)
+                writer.save()
+                df = pandas.DataFrame({'s1': s1,
                                        'd1': d1})
 
-                writer = ExcelWriter('rhogb.xlsx')
-                df.to_excel(writer, 'Sheet1', index=False)
+                writer = ExcelWriter('bol2.xlsx')
+                df.to_excel(writer, 'Sheet2', index=False)
+                writer.save()
                 plt.plot(s1, d1, 'o', label='Больцман')
                 plt.grid(True)
                 plt.legend()
@@ -222,11 +227,15 @@ def main():
                 print('s2 = ', s1)
                 print('d2 = ', d1)
                 df = pandas.DataFrame({'x1': x1,
-                                       'y1': y1,
-                                       's1': s1,
+                                       'y1': y1})
+
+                writer = ExcelWriter('bol3.xlsx')
+                df.to_excel(writer, 'Sheet2', index=False)
+                writer.save()
+                df = pandas.DataFrame({'s1': s1,
                                        'd1': d1})
 
-                writer = ExcelWriter('rhogb.xlsx')
+                writer = ExcelWriter('bol4.xlsx')
                 df.to_excel(writer, 'Sheet2', index=False)
                 plt.plot(s1, d1, 'o', s1, a1 * s1 + b1, label='Больцман')
                 plt.grid(True)

@@ -282,6 +282,7 @@ def plot_starter():
             t += 1
             print(t)
             V.append(math.sqrt(balls[1].vx**2 + balls[1].vy**2))
+            print()
 
             pylab.pause(1)
 

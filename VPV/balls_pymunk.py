@@ -143,6 +143,8 @@ def main():
     balls = []
     draw_options = pymunk.pygame_util.DrawOptions(screen)
     add_balls(space, balls)
+    p = 0
+    t = 0
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -322,21 +324,7 @@ def main():
         space.debug_draw(draw_options)
 
         pygame.display.flip()
-        p = 0
-        for ball in balls:
-            x, y = ball.body.position
-            vx, vy = ball.body._get_velocity()
-            if ((WIN_width - x) < (vx * 0.05)) or (x < (-vx * 0.05)) or ((WIN_height - y) < (vy * 0.05)) or (y < (-vy * 0.05)):
-                l1 = (WIN_width - x) / (vx * 0.05)
-                l2 = x / (-vx * 0.05)
-                l3 = (WIN_height - y) / (vy * 0.05)
-                l4 = y / (-vy * 0.05)
-                a = sorted([l1, l2, l3, l4])
-                if l1 == a[2] or l2 == a[2]:
-                    p += 2*math.fabs(vx)/(0.05 * WIN_height)
-                elif l3 == a[2] or l4 == a[2]:
-                    p += 2*math.fabs(vy)/(0.05 * WIN_width)
-        print(p)
+        print('P = ', p)
         print(time.clock())
         clock.tick(50)
 
@@ -386,6 +374,7 @@ def plot_starter2():
 if __name__ == '__main__':
     thread1 = Thread(target=main)
     thread2 = Thread(target=plot_starter)
+    thread3 = Thread(target=plot_starter2)
 
     thread1.start()
     thread2.start()
