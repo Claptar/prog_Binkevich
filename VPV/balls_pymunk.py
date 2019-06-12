@@ -156,6 +156,8 @@ def main():
                 with open("copy_and_pickle.pickle", "rb") as f:
                     space = pickle.load(f)
                     shapes = space._get_shapes()
+                    handler = space.add_default_collision_handler()
+                    handler.post_solve = coll_post
                     for i in range(0, len(shapes) - 4):
                         balls[i] = shapes[i + 4]
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
@@ -327,6 +329,10 @@ def main():
         print('P = ', p)
         print(time.clock())
         clock.tick(50)
+
+
+def coll_post(arbiter, space, data):
+    print('post solve')
 
 
 def plot_starter():
